@@ -6,35 +6,89 @@
       "name": "Napa",
       "start": "2026-07-27",
       "end": "2026-07-31",
-      "links": [],
+      "links": [
+        {
+          "label": "kjkj",
+          "url": "hgfgf"
+        },
+        {
+          "label": "kllkjjjj",
+          "url": "hgfhgfh"
+        }
+      ],
       "events": {
         "2026-07-27": [
           {
-            "id": "t17816295836212l1f",
-            "type": "Food",
-            "title": "gfhdbcvbcvb",
-            "start": "01:00",
-            "end": "02:00",
+            "id": "t1781643748046zdj3",
+            "type": "Travel",
+            "title": "Leave San Clemente",
+            "start": "07:00",
+            "end": "11:00",
             "location": "",
             "notes": "",
             "links": [],
             "options": [],
-            "isAddOn": true
+            "isAddOn": false
           },
           {
-            "id": "t17816296071915mlh",
-            "type": "Free",
-            "title": "cvbcvbv",
-            "start": "03:00",
-            "end": "04:00",
+            "id": "t1781643877187xtcu",
+            "type": "Food",
+            "title": "Los Alamos - Lunch",
+            "start": "11:00",
+            "end": "13:00",
+            "location": "",
+            "notes": "Lunch - Bobs Well Bread\nWalk Bell Street - Sisters Gift and Home, Plenty on Bell, General Store\nPico - Sweet ",
+            "links": [],
+            "options": [],
+            "isAddOn": false
+          },
+          {
+            "id": "t1781641727381wdoa",
+            "type": "Activity",
+            "title": "Vino Bello - Hotel Check-In",
+            "start": "16:00",
+            "end": "16:30",
+            "location": "Vino Bello, Napa Valley",
+            "notes": "",
+            "links": [],
+            "options": [],
+            "isAddOn": false
+          },
+          {
+            "id": "t1781643950293yfov",
+            "type": "Travel",
+            "title": "Drive to Hotel",
+            "start": "13:00",
+            "end": "16:00",
             "location": "",
             "notes": "",
             "links": [],
             "options": [],
             "isAddOn": false
           }
-        ]
-      }
+        ],
+        "2026-07-28": [],
+        "2026-07-26": []
+      },
+      "packingList": [
+        {
+          "id": "t1781640690956a0u0",
+          "emoji": "📦",
+          "name": "General",
+          "items": [
+            {
+              "id": "t1781642857430bnw8",
+              "name": "sdf",
+              "checked": false
+            },
+            {
+              "id": "t17816428618798j4h",
+              "name": "ssdf",
+              "checked": false
+            }
+          ]
+        }
+      ]
     }
   },
   "customTypes": [

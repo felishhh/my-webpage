@@ -930,10 +930,13 @@ function renderPackingPanel() {
     const doAdd = () => {
       const name = addIn.value.trim(); if (!name) return;
       cat.items.push({ id: uid(), name, checked: false });
-      addIn.value = ''; dbSave(); renderPackingPanel();
+      dbSave(); renderPackingPanel();
+      // refocus the add input for this category so Enter can keep adding items
+      const inputs = document.querySelectorAll('.pack-add-item input');
+      if (inputs[ci]) inputs[ci].focus();
     };
     addBtn.addEventListener('click', doAdd);
-    addIn.addEventListener('keydown', e => { if (e.key === 'Enter') doAdd(); });
+    addIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); doAdd(); } });
     addRow.appendChild(addIn); addRow.appendChild(addBtn);
     card.appendChild(addRow);
 

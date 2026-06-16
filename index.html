@@ -61,6 +61,8 @@
     .date-group label { color: var(--muted); font-size: .8rem; white-space: nowrap; }
     #btn-trip-links { margin-left: auto; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: .82rem; }
     #btn-trip-links:hover { background: #e0f2fe; }
+    #btn-packing-list { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: .82rem; }
+    #btn-packing-list:hover { background: #e0f2fe; }
 
     /* ── Trip links panel ── */
     #trip-links-panel { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: none; flex-direction: column; gap: 10px; }
@@ -98,6 +100,44 @@
     .btn-type-edit:hover { border-color: var(--accent); color: var(--accent); }
     .btn-type-del { background: none; border: 1px solid var(--border); color: var(--muted); padding: 3px 8px; border-radius: 5px; cursor: pointer; font-size: .75rem; }
     .btn-type-del:hover { border-color: #ef4444; color: #ef4444; }
+
+    /* ── Packing list panel ── */
+    #packing-panel { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: none; flex-direction: column; gap: 14px; max-height: 72vh; overflow-y: auto; }
+    #packing-panel.open { display: flex; }
+    #packing-panel > h3 { font-size: .85rem; color: var(--muted); flex-shrink: 0; }
+    .pack-summary { font-size: .78rem; color: var(--muted); }
+    .pack-summary strong { color: #15803d; }
+    .pack-cats { display: flex; flex-direction: column; gap: 10px; }
+    .pack-cat { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .pack-cat-head { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--surface2); position: relative; }
+    .pack-cat-emoji { font-size: 1.1rem; cursor: pointer; padding: 2px 5px; border-radius: 5px; border: 1px solid transparent; user-select: none; }
+    .pack-cat-emoji:hover { border-color: var(--border); background: var(--surface); }
+    .pack-emoji-picker { position: absolute; top: 38px; left: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; width: 220px; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+    .pack-emoji-opt { width: 28px; height: 28px; font-size: .95rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 4px; }
+    .pack-emoji-opt:hover { background: #e0f2fe; }
+    .pack-cat-name { font-size: .88rem; font-weight: 600; flex: 1; background: none; border: 1px solid transparent; color: var(--text); padding: 3px 6px; border-radius: 4px; min-width: 0; }
+    .pack-cat-name:focus { background: var(--surface); border-color: var(--accent); outline: none; }
+    .pack-progress-badge { font-size: .72rem; color: var(--muted); white-space: nowrap; padding: 2px 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); }
+    .pack-progress-badge.done { color: #15803d; border-color: #86efac; background: #dcfce7; font-weight: 700; }
+    .btn-pack-del-cat { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; padding: 2px 5px; border-radius: 4px; }
+    .btn-pack-del-cat:hover { color: #ef4444; }
+    .pack-progress-bar { height: 3px; background: var(--border); }
+    .pack-progress-fill { height: 100%; background: #22c55e; transition: width .25s; border-radius: 0 2px 2px 0; }
+    .pack-items { padding: 8px 12px; display: flex; flex-direction: column; gap: 5px; }
+    .pack-item { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+    .pack-item input[type="checkbox"] { width: 15px; height: 15px; accent-color: #22c55e; cursor: pointer; flex-shrink: 0; }
+    .pack-item-name { font-size: .85rem; flex: 1; color: var(--text); }
+    .pack-item-name.checked { text-decoration: line-through; color: var(--muted); }
+    .btn-pack-del-item { background: none; border: none; color: transparent; cursor: pointer; font-size: .78rem; padding: 2px 4px; }
+    .pack-item:hover .btn-pack-del-item { color: var(--muted); }
+    .btn-pack-del-item:hover { color: #ef4444 !important; }
+    .pack-add-item { display: flex; gap: 6px; padding: 8px 12px 10px; border-top: 1px solid var(--border); margin-top: 2px; }
+    .pack-add-item input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 5px 9px; border-radius: 5px; font-size: .84rem; flex: 1; }
+    .pack-add-item input:focus { outline: none; border-color: var(--accent); }
+    .pack-add-item button { background: var(--accent); color: #fff; border: none; padding: 5px 13px; border-radius: 5px; cursor: pointer; font-size: .82rem; font-weight: 600; }
+    .pack-add-item button:hover { opacity: .88; }
+    .btn-pack-add-cat { background: none; border: 1px dashed var(--border); color: var(--muted); border-radius: 8px; padding: 9px; cursor: pointer; font-size: .82rem; text-align: center; flex-shrink: 0; }
+    .btn-pack-add-cat:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ── Empty states ── */
     .center-msg { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 40px; }
@@ -231,12 +271,19 @@
       <div class="date-group"><label>Start</label><input id="start-date" class="topbar-input" type="date"></div>
       <div class="date-group"><label>End</label><input id="end-date" class="topbar-input" type="date"></div>
       <button id="btn-trip-links">🔗 Trip Links</button>
+      <button id="btn-packing-list">🧳 Packing</button>
     </div>
     <div id="trip-links-panel">
       <h3>Trip Links & Resources</h3>
       <div class="links-editor" id="trip-links-editor"></div>
       <button class="btn-add-link" id="btn-add-trip-link">+ Add link</button>
       <div class="links-chips" id="trip-links-chips"></div>
+    </div>
+    <div id="packing-panel">
+      <h3>🧳 Packing List</h3>
+      <div class="pack-summary" id="pack-summary"></div>
+      <div class="pack-cats" id="pack-cats"></div>
+      <button class="btn-pack-add-cat" id="btn-pack-add-cat">+ Add Category</button>
     </div>
     <div id="types-panel">
       <h3>Event Types</h3>
@@ -329,6 +376,12 @@ const EMOJI_SET = [
   '🚗','✈️','🚂','🚢','🏍️','🚴','🚶','🛺','🚁','⛵',
   '🎯','🏖️','🏔️','🎭','🎨','🎵','⛷️','🏄','🎲','📸',
   '😎','💤','🛒','🏥','⛽','🔑','🎁','⭐','💼','🗺️',
+];
+
+const PACK_EMOJIS = ['👕','🧴','📦','🐶','👶','💊','📸','⛺','🎒','🚗','🏖️','🎮','💼','🧢','👟','🪥','🔌','📱','🍎','🎵'];
+
+const DEFAULT_PACK_CATS = [
+  { emoji:'📦', name:'General', items:[] },
 ];
 
 const HOURS  = Array.from({ length: 24 }, (_, i) => i);
@@ -524,8 +577,11 @@ function renderTripEditor() {
   document.getElementById('end-date').value = t.end||'';
   document.title = t.name?`${t.name} — Road Trip`:'Road Trip Planner';
   document.getElementById('trip-links-panel').classList.remove('open');
+  document.getElementById('packing-panel').classList.remove('open');
   document.getElementById('types-panel').classList.remove('open');
-  tpEditId=null; tpShowCreate=false;
+  document.getElementById('cal-wrapper').style.display = '';
+  document.getElementById('no-dates-state').style.display = '';
+  tpEditId=null; tpShowCreate=false; packEmojiOpenId=null;
   renderLegend(); renderTripLinks(); renderCalendar();
 }
 
@@ -598,7 +654,7 @@ function placeEvent(col, ev, iso) {
 let mMode='new', mDate=null, mId=null, mType='Food', mLinks=[], mOptions=[], mIsAddOn=false;
 
 function openEventModal(iso, hour, ev) {
-  mDate=iso; typeFormMode=null;
+  mDate=iso;
   const dateField = document.getElementById('ev-date-field');
   const dateInput = document.getElementById('ev-date');
 
@@ -769,6 +825,140 @@ function buildTypeForm(isCreate, editType) {
 }
 
 document.getElementById('btn-add-type-row').addEventListener('click',()=>{ tpShowCreate=!tpShowCreate; tpEditId=null; tpColor=PRESET_COLORS[5]; tpIcon='⭐'; renderTypesPanel(); });
+
+// ── Packing list ───────────────────────────────────────────────────────────────
+function initPackingList(t) {
+  if (!t.packingList || !t.packingList.length) {
+    t.packingList = DEFAULT_PACK_CATS.map(c => ({
+      id: uid(), emoji: c.emoji, name: c.name,
+      items: c.items.map(name => ({ id: uid(), name, checked: false })),
+    }));
+  }
+}
+
+let packEmojiOpenId = null;
+
+function renderPackingPanel() {
+  const t = activeTrip(); if (!t) return;
+  initPackingList(t);
+
+  // Summary
+  const allItems = t.packingList.flatMap(c => c.items);
+  const checkedCount = allItems.filter(i => i.checked).length;
+  const summaryEl = document.getElementById('pack-summary');
+  if (allItems.length) {
+    const pct = Math.round(checkedCount / allItems.length * 100);
+    summaryEl.innerHTML = `<strong>${checkedCount}/${allItems.length}</strong> items packed &nbsp;·&nbsp; ${pct}% done`;
+  } else {
+    summaryEl.textContent = '';
+  }
+
+  const catsEl = document.getElementById('pack-cats'); catsEl.innerHTML = '';
+
+  t.packingList.forEach((cat, ci) => {
+    const total = cat.items.length, done = cat.items.filter(i => i.checked).length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+
+    const card = document.createElement('div'); card.className = 'pack-cat';
+
+    // Header
+    const head = document.createElement('div'); head.className = 'pack-cat-head';
+
+    // Emoji button + picker
+    const emojiBtn = document.createElement('div'); emojiBtn.className = 'pack-cat-emoji'; emojiBtn.textContent = cat.emoji;
+    emojiBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      packEmojiOpenId = packEmojiOpenId === cat.id ? null : cat.id;
+      renderPackingPanel();
+    });
+    head.appendChild(emojiBtn);
+
+    if (packEmojiOpenId === cat.id) {
+      const picker = document.createElement('div'); picker.className = 'pack-emoji-picker';
+      PACK_EMOJIS.forEach(em => {
+        const opt = document.createElement('div'); opt.className = 'pack-emoji-opt'; opt.textContent = em;
+        opt.addEventListener('click', e => { e.stopPropagation(); cat.emoji = em; packEmojiOpenId = null; dbSave(); renderPackingPanel(); });
+        picker.appendChild(opt);
+      });
+      head.appendChild(picker);
+    }
+
+    // Name
+    const nameIn = document.createElement('input'); nameIn.className = 'pack-cat-name'; nameIn.value = cat.name; nameIn.placeholder = 'Category name…';
+    nameIn.addEventListener('input', e => { cat.name = e.target.value; dbSave(); });
+    head.appendChild(nameIn);
+
+    // Progress badge
+    const badge = document.createElement('span');
+    badge.className = 'pack-progress-badge' + (total && done === total ? ' done' : '');
+    badge.textContent = total ? (done === total ? '✓ All packed' : `${done}/${total}`) : '0 items';
+    head.appendChild(badge);
+
+    // Delete category
+    const delBtn = document.createElement('button'); delBtn.className = 'btn-pack-del-cat'; delBtn.title = 'Delete category'; delBtn.textContent = '🗑';
+    delBtn.addEventListener('click', () => {
+      if (total && !confirm(`Delete "${cat.name}" and its ${total} items?`)) return;
+      t.packingList.splice(ci, 1); dbSave(); renderPackingPanel();
+    });
+    head.appendChild(delBtn);
+    card.appendChild(head);
+
+    // Progress bar
+    const bar = document.createElement('div'); bar.className = 'pack-progress-bar';
+    const fill = document.createElement('div'); fill.className = 'pack-progress-fill'; fill.style.width = pct + '%';
+    bar.appendChild(fill); card.appendChild(bar);
+
+    // Items
+    const itemsEl = document.createElement('div'); itemsEl.className = 'pack-items';
+    cat.items.forEach((item, ii) => {
+      const row = document.createElement('div'); row.className = 'pack-item';
+      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = item.checked;
+      cb.addEventListener('change', e => { item.checked = e.target.checked; dbSave(); renderPackingPanel(); });
+      const label = document.createElement('span'); label.className = 'pack-item-name' + (item.checked ? ' checked' : ''); label.textContent = item.name;
+      const rmBtn = document.createElement('button'); rmBtn.className = 'btn-pack-del-item'; rmBtn.title = 'Remove'; rmBtn.textContent = '✕';
+      rmBtn.addEventListener('click', () => { cat.items.splice(ii, 1); dbSave(); renderPackingPanel(); });
+      row.appendChild(cb); row.appendChild(label); row.appendChild(rmBtn);
+      itemsEl.appendChild(row);
+    });
+    card.appendChild(itemsEl);
+
+    // Add item row
+    const addRow = document.createElement('div'); addRow.className = 'pack-add-item';
+    const addIn = document.createElement('input'); addIn.type = 'text'; addIn.placeholder = 'Add item…';
+    const addBtn = document.createElement('button'); addBtn.textContent = 'Add';
+    const doAdd = () => {
+      const name = addIn.value.trim(); if (!name) return;
+      cat.items.push({ id: uid(), name, checked: false });
+      addIn.value = ''; dbSave(); renderPackingPanel();
+    };
+    addBtn.addEventListener('click', doAdd);
+    addIn.addEventListener('keydown', e => { if (e.key === 'Enter') doAdd(); });
+    addRow.appendChild(addIn); addRow.appendChild(addBtn);
+    card.appendChild(addRow);
+
+    catsEl.appendChild(card);
+  });
+}
+
+document.getElementById('btn-packing-list').addEventListener('click', () => {
+  const panel = document.getElementById('packing-panel');
+  panel.classList.toggle('open');
+  const isOpen = panel.classList.contains('open');
+  document.getElementById('cal-wrapper').style.display = isOpen ? 'none' : '';
+  document.getElementById('no-dates-state').style.display = isOpen ? 'none' : '';
+  if (isOpen) renderPackingPanel();
+  else renderCalendar();
+});
+
+document.getElementById('btn-pack-add-cat').addEventListener('click', () => {
+  const t = activeTrip(); if (!t) return;
+  initPackingList(t);
+  t.packingList.push({ id: uid(), emoji: '📦', name: 'New Category', items: [] });
+  dbSave(); renderPackingPanel();
+});
+
+// close packing picker when clicking elsewhere
+document.addEventListener('click', () => { if (packEmojiOpenId) { packEmojiOpenId = null; renderPackingPanel(); } });
 
 // ── Event links ────────────────────────────────────────────────────────────────
 function renderEvLinks() {

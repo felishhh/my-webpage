@@ -12,28 +12,44 @@
           {
             "id": "t17816295836212l1f",
             "type": "Food",
-            "icon": "🍕",
             "title": "gfhdbcvbcvb",
             "start": "01:00",
             "end": "02:00",
             "location": "",
             "notes": "",
-            "links": []
+            "links": [],
+            "options": [],
+            "isAddOn": true
           },
           {
             "id": "t17816296071915mlh",
-            "type": "Travel",
-            "icon": "🚗",
+            "type": "Free",
             "title": "cvbcvbv",
             "start": "03:00",
             "end": "04:00",
             "location": "",
             "notes": "",
-            "links": []
+            "links": [],
+            "options": [],
+            "isAddOn": false
           }
         ]
       }
     }
   },
-  "customTypes": []
+  "customTypes": [
+    {
+      "id": "custom-t1781633553422hia1",
+      "name": "Winery",
+      "color": "#ef4444",
+      "icon": "🍺"
+    },
+    {
+      "id": "custom-t1781633571772num4",
+      "name": "Hike",
+      "color": "#eab308",
+      "icon": "🚶"
+    }
+  ],
+  "typeOverrides": {}
 }

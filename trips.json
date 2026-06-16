@@ -1,0 +1,39 @@
+{
+  "activeId": "t1781629186847fxpq",
+  "trips": {
+    "t1781629186847fxpq": {
+      "id": "t1781629186847fxpq",
+      "name": "Napa",
+      "start": "2026-07-27",
+      "end": "2026-07-31",
+      "links": [],
+      "events": {
+        "2026-07-27": [
+          {
+            "id": "t17816295836212l1f",
+            "type": "Food",
+            "icon": "🍕",
+            "title": "gfhdbcvbcvb",
+            "start": "01:00",
+            "end": "02:00",
+            "location": "",
+            "notes": "",
+            "links": []
+          },
+          {
+            "id": "t17816296071915mlh",
+            "type": "Travel",
+            "icon": "🚗",
+            "title": "cvbcvbv",
+            "start": "03:00",
+            "end": "04:00",
+            "location": "",
+            "notes": "",
+            "links": []
+          }
+        ]
+      }
+    }
+  },
+  "customTypes": []
+}

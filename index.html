@@ -7,7 +7,6 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --food: #ea6c0a; --travel: #2563eb; --activity: #059669; --free: #7c3aed;
       --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9;
       --border: #e2e8f0; --text: #0f172a; --muted: #64748b; --accent: #0284c7;
     }
@@ -27,22 +26,31 @@
     }
     #btn-new-trip:hover { opacity: .88; }
     #trips-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .trip-item {
-      padding: 10px 12px; border-radius: 8px; cursor: pointer;
-      border: 1px solid transparent; position: relative;
-    }
+    .trip-item { padding: 10px 12px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; position: relative; }
     .trip-item:hover { background: var(--surface2); }
-    .trip-item.active { background: rgba(56,189,248,.1); border-color: rgba(56,189,248,.35); }
+    .trip-item.active { background: #e0f2fe; border-color: #7dd3fc; }
     .trip-item-name { font-size: .88rem; font-weight: 600; }
     .trip-item-dates { font-size: .72rem; color: var(--muted); margin-top: 2px; }
     .trip-item-delete {
-      position: absolute; top: 8px; right: 8px;
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: .8rem; opacity: 0; padding: 2px 5px; border-radius: 4px;
+      position: absolute; top: 8px; right: 8px; background: none; border: none;
+      color: var(--muted); cursor: pointer; font-size: .8rem; opacity: 0; padding: 2px 5px; border-radius: 4px;
     }
     .trip-item:hover .trip-item-delete { opacity: 1; }
     .trip-item-delete:hover { color: #ef4444; background: rgba(239,68,68,.1); }
     .sidebar-empty { color: var(--muted); font-size: .82rem; text-align: center; padding: 20px 0; }
+
+    /* ── File bar ── */
+    #file-bar { padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+    #file-status { font-size: .72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #file-status.linked { color: #16a34a; font-weight: 600; }
+    #file-status.unsaved { color: #d97706; }
+    .file-btns { display: flex; gap: 5px; }
+    .btn-file {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      padding: 5px 0; border-radius: 5px; cursor: pointer; font-size: .75rem; text-align: center;
+    }
+    .btn-file:hover { border-color: var(--accent); color: var(--accent); }
+    #file-unsupported { font-size: .7rem; color: #dc2626; padding: 4px 0; display: none; }
 
     /* ── Main ── */
     #main { margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
@@ -64,7 +72,7 @@
       margin-left: auto; background: transparent; border: 1px solid var(--accent);
       color: var(--accent); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: .82rem;
     }
-    #btn-trip-links:hover { background: rgba(56,189,248,.1); }
+    #btn-trip-links:hover { background: #e0f2fe; }
 
     /* ── Trip links panel ── */
     #trip-links-panel {
@@ -93,47 +101,33 @@
     .links-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
     .links-chips a {
       color: var(--accent); font-size: .8rem; text-decoration: none;
-      background: rgba(56,189,248,.08); padding: 2px 10px;
-      border-radius: 4px; border: 1px solid rgba(56,189,248,.2);
+      background: #e0f2fe; padding: 2px 10px; border-radius: 4px; border: 1px solid #7dd3fc;
     }
     .links-chips a:hover { text-decoration: underline; }
 
     /* ── Legend ── */
     #legend {
       display: flex; gap: 14px; padding: 8px 20px; flex-wrap: wrap;
-      background: var(--surface); border-bottom: 1px solid var(--border);
+      background: var(--surface); border-bottom: 1px solid var(--border); align-items: center;
     }
     .leg { display: flex; align-items: center; gap: 5px; font-size: .76rem; color: var(--muted); }
-    .leg-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
     #legend .hint { margin-left: auto; font-size: .74rem; color: var(--muted); }
 
-    /* ── Empty / no-trip states ── */
+    /* ── Empty states ── */
     .center-msg {
       flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 10px;
-      color: var(--muted); padding: 40px;
+      align-items: center; justify-content: center; gap: 10px; color: var(--muted); padding: 40px;
     }
     .center-msg .icon { font-size: 3rem; }
     .center-msg p { font-size: .95rem; }
-    .center-msg small { font-size: .8rem; }
 
     /* ── Calendar ── */
     #cal-wrapper { overflow-x: auto; padding: 20px; flex: 1; }
     #cal { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; min-width: max-content; }
-
-    .time-col {
-      width: 54px; flex-shrink: 0; background: var(--surface);
-      border-right: 1px solid var(--border); padding-top: 48px;
-    }
-    .time-tick {
-      height: 60px; display: flex; align-items: flex-start;
-      justify-content: flex-end; padding: 4px 7px 0 0;
-      font-size: .68rem; color: var(--muted);
-    }
-    .day-col {
-      flex: 1; min-width: 170px; border-right: 1px solid var(--border);
-      background: var(--bg); position: relative;
-    }
+    .time-col { width: 54px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); padding-top: 48px; }
+    .time-tick { height: 60px; display: flex; align-items: flex-start; justify-content: flex-end; padding: 4px 7px 0 0; font-size: .68rem; color: var(--muted); }
+    .day-col { flex: 1; min-width: 170px; border-right: 1px solid var(--border); background: var(--bg); position: relative; }
     .day-col:last-child { border-right: none; }
     .day-head {
       height: 48px; background: var(--surface); border-bottom: 1px solid var(--border);
@@ -141,57 +135,110 @@
       font-weight: 600; font-size: .82rem; position: sticky; top: 0; z-index: 2;
     }
     .day-head .dn { font-size: 1.25rem; color: var(--accent); margin-right: 5px; }
-    .hour-slot {
-      height: 60px; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background .1s;
-    }
-    .hour-slot:hover { background: rgba(56,189,248,.05); }
+    .hour-slot { height: 60px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .1s; }
+    .hour-slot:hover { background: #f0f9ff; }
     .hour-slot:last-child { border-bottom: none; }
     .ev {
       position: absolute; left: 3px; right: 3px; border-radius: 5px;
-      padding: 3px 6px; font-size: .7rem; font-weight: 600;
+      padding: 3px 6px; font-size: .7rem; font-weight: 600; color: #fff;
       cursor: pointer; overflow: hidden; z-index: 1; opacity: .93;
-      transition: opacity .12s, transform .12s;
-      display: flex; flex-direction: column; gap: 1px;
+      transition: opacity .12s, transform .12s; display: flex; flex-direction: column; gap: 1px;
     }
     .ev:hover { opacity: 1; transform: scaleX(1.015); }
     .ev .et { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ev .eT { font-weight: 400; opacity: .8; font-size: .63rem; }
-    .ev[data-type="Food"]     { background: var(--food);     color: #fff; }
-    .ev[data-type="Travel"]   { background: var(--travel);   color: #fff; }
-    .ev[data-type="Activity"] { background: var(--activity); color: #fff; }
-    .ev[data-type="Free"]     { background: var(--free);     color: #fff; }
+    .ev .eT { font-weight: 400; opacity: .85; font-size: .63rem; }
 
     /* ── Modal ── */
     .overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.55);
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
       display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px;
     }
     .modal {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 26px; width: 100%; max-width: 460px;
-      max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;
+      border-radius: 12px; padding: 24px; width: 100%; max-width: 500px;
+      max-height: 92vh; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;
     }
     .modal h2 { font-size: 1.05rem; color: var(--accent); }
     .field { display: flex; flex-direction: column; gap: 4px; }
-    .field label { font-size: .77rem; color: var(--muted); }
+    .field label { font-size: .77rem; color: var(--muted); font-weight: 500; }
     .field input, .field textarea {
       background: var(--surface2); border: 1px solid var(--border); color: var(--text);
       padding: 8px 10px; border-radius: 6px; font-size: .88rem; width: 100%; color-scheme: light;
     }
-    .field textarea { resize: vertical; min-height: 65px; font-family: inherit; }
+    .field textarea { resize: vertical; min-height: 60px; font-family: inherit; }
     .two-col { display: flex; gap: 10px; }
     .two-col .field { flex: 1; }
-    .pills { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    /* ── Type pills ── */
+    .pills-wrap { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .pill {
-      padding: 5px 13px; border-radius: 20px; border: 2px solid transparent;
-      cursor: pointer; font-size: .8rem; font-weight: 600; opacity: .4; transition: opacity .14s;
+      padding: 5px 12px; border-radius: 20px; border: 2px solid transparent;
+      cursor: pointer; font-size: .8rem; font-weight: 600; opacity: .4;
+      transition: opacity .14s; position: relative; display: flex; align-items: center; gap: 4px;
+      color: #fff;
     }
     .pill.on { opacity: 1; }
-    .pill[data-t="Food"]     { background: var(--food);     color: #fff; border-color: var(--food); }
-    .pill[data-t="Travel"]   { background: var(--travel);   color: #fff; border-color: var(--travel); }
-    .pill[data-t="Activity"] { background: var(--activity); color: #fff; border-color: var(--activity); }
-    .pill[data-t="Free"]     { background: var(--free);     color: #fff; border-color: var(--free); }
+    .pill-del {
+      margin-left: 2px; background: rgba(255,255,255,.3); border: none; border-radius: 50%;
+      width: 14px; height: 14px; font-size: .6rem; cursor: pointer; color: #fff;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    .pill-del:hover { background: rgba(255,255,255,.6); }
+    .btn-new-type {
+      padding: 5px 10px; border-radius: 20px; border: 1px dashed var(--border);
+      background: none; color: var(--muted); cursor: pointer; font-size: .78rem;
+    }
+    .btn-new-type:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Create-type inline form ── */
+    .type-form {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .type-form h4 { font-size: .82rem; color: var(--muted); font-weight: 600; }
+    .type-form input[type="text"] {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 7px 10px; border-radius: 6px; font-size: .88rem; width: 100%;
+    }
+    .color-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+    .swatch {
+      width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+      border: 2px solid transparent; transition: transform .1s;
+    }
+    .swatch.on { border-color: var(--text); transform: scale(1.2); }
+    .type-form-actions { display: flex; gap: 6px; justify-content: flex-end; }
+    .btn-sm {
+      padding: 5px 12px; border-radius: 5px; font-size: .8rem; cursor: pointer; font-weight: 600;
+    }
+    .btn-sm.primary { background: var(--accent); color: #fff; border: none; }
+    .btn-sm.primary:hover { opacity: .88; }
+    .btn-sm.ghost { background: none; border: 1px solid var(--border); color: var(--muted); }
+    .btn-sm.ghost:hover { color: var(--text); }
+
+    /* ── Icon picker ── */
+    .icon-picker { display: flex; flex-direction: column; gap: 6px; }
+    .icon-current {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .icon-preview {
+      width: 36px; height: 36px; border-radius: 8px; background: var(--surface2);
+      border: 1px solid var(--border); display: flex; align-items: center;
+      justify-content: center; font-size: 1.3rem;
+    }
+    .icon-custom-input {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      padding: 6px 9px; border-radius: 6px; font-size: 1rem; width: 70px; text-align: center;
+    }
+    .icon-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+    .icon-cell {
+      width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface2); cursor: pointer; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; transition: background .1s;
+    }
+    .icon-cell:hover { background: #e0f2fe; }
+    .icon-cell.on { background: #bae6fd; border-color: var(--accent); }
+
+    /* ── Modal actions ── */
     .modal-links { display: flex; flex-direction: column; gap: 5px; }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
     .btn-primary {
@@ -209,32 +256,37 @@
       padding: 8px 13px; border-radius: 6px; cursor: pointer; font-size: .88rem; margin-right: auto;
     }
     .btn-delete:hover { background: rgba(239,68,68,.1); }
+
+    hr.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
   </style>
 </head>
 <body>
 
-<!-- Sidebar: trip list -->
+<!-- Sidebar -->
 <div id="sidebar">
   <div id="sidebar-header">
     <h1>🚗 Road Trip Planner</h1>
     <button id="btn-new-trip">+ New Trip</button>
   </div>
+  <div id="file-bar">
+    <div id="file-status">💾 No file linked</div>
+    <div class="file-btns">
+      <button class="btn-file" id="btn-open-file">📂 Open</button>
+      <button class="btn-file" id="btn-save-file">💾 Save As</button>
+    </div>
+    <div id="file-unsupported">⚠️ Use Chrome or Edge for file support</div>
+  </div>
   <div id="trips-list"></div>
 </div>
 
-<!-- Main area -->
+<!-- Main -->
 <div id="main">
-
-  <!-- No trip selected state -->
   <div id="no-trip-state" class="center-msg" style="display:none">
     <div class="icon">🗺️</div>
-    <p>Select a trip from the sidebar or create a new one</p>
+    <p>Select a trip or create a new one</p>
   </div>
 
-  <!-- Trip editor (shown when a trip is active) -->
   <div id="trip-editor" style="display:none">
-
-    <!-- Top bar -->
     <div id="topbar">
       <input id="trip-name-input" class="topbar-input" type="text" placeholder="Trip name…">
       <div class="date-group">
@@ -248,7 +300,6 @@
       <button id="btn-trip-links">🔗 Trip Links</button>
     </div>
 
-    <!-- Trip links panel -->
     <div id="trip-links-panel">
       <h3>Trip Links & Resources</h3>
       <div class="links-editor" id="trip-links-editor"></div>
@@ -256,16 +307,10 @@
       <div class="links-chips" id="trip-links-chips"></div>
     </div>
 
-    <!-- Legend -->
     <div id="legend">
-      <div class="leg"><div class="leg-dot" style="background:var(--food)"></div> Food</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--travel)"></div> Travel</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--activity)"></div> Activity</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--free)"></div> Free Time</div>
-      <span class="hint">Click any time slot to add an event</span>
+      <span class="hint" style="margin-left:0;margin-right:auto">Click any time slot to add an event</span>
     </div>
 
-    <!-- Calendar or empty-dates message -->
     <div id="no-dates-state" class="center-msg" style="display:none">
       <div class="icon">📅</div>
       <p>Enter start and end dates above to see your calendar</p>
@@ -273,7 +318,6 @@
     <div id="cal-wrapper" style="display:none">
       <div id="cal"></div>
     </div>
-
   </div>
 </div>
 
@@ -281,15 +325,27 @@
 <div class="overlay" id="event-modal" style="display:none">
   <div class="modal">
     <h2 id="modal-heading">Add Event</h2>
+
+    <!-- Type picker -->
     <div class="field">
       <label>Type</label>
-      <div class="pills">
-        <div class="pill on" data-t="Food">🍔 Food</div>
-        <div class="pill" data-t="Travel">🚗 Travel</div>
-        <div class="pill" data-t="Activity">🎯 Activity</div>
-        <div class="pill" data-t="Free">😎 Free Time</div>
+      <div class="pills-wrap" id="type-pills"></div>
+    </div>
+
+    <!-- Icon picker -->
+    <div class="field">
+      <label>Icon</label>
+      <div class="icon-picker">
+        <div class="icon-current">
+          <div class="icon-preview" id="icon-preview">🍔</div>
+          <input class="icon-custom-input" id="icon-custom" type="text" maxlength="2" placeholder="✏️">
+        </div>
+        <div class="icon-grid" id="icon-grid"></div>
       </div>
     </div>
+
+    <hr class="divider">
+
     <div class="field">
       <label>Title</label>
       <input type="text" id="ev-title" placeholder="e.g. Lunch at Joe's Diner">
@@ -320,110 +376,266 @@
 </div>
 
 <script>
-// ── Storage ────────────────────────────────────────────────────────────────────
-const KEY = 'rtp-v1';
+// ── Constants ──────────────────────────────────────────────────────────────────
+const LS_KEY    = 'rtp-v2';
+const IDB_NAME  = 'rtp-fsh';
+const IDB_STORE = 'handles';
+const IDB_KEY   = 'tripsFile';
 
-function dbLoad() {
-  try { const r = localStorage.getItem(KEY); return r ? JSON.parse(r) : null; } catch { return null; }
+const BUILT_IN = [
+  { id: 'Food',     name: 'Food',      color: '#ea6c0a', icon: '🍔' },
+  { id: 'Travel',   name: 'Travel',    color: '#2563eb', icon: '🚗' },
+  { id: 'Activity', name: 'Activity',  color: '#059669', icon: '🎯' },
+  { id: 'Free',     name: 'Free Time', color: '#7c3aed', icon: '😎' },
+];
+
+const PRESET_COLORS = [
+  '#ef4444','#f97316','#eab308','#22c55e',
+  '#06b6d4','#3b82f6','#8b5cf6','#ec4899',
+  '#64748b','#1e293b',
+];
+
+const EMOJI_SET = [
+  '🍔','🍕','🌮','🍜','🥗','🍣','☕','🍺','🍦','🥞',
+  '🚗','✈️','🚂','🚢','🏍️','🚴','🚶','🛺','🚁','⛵',
+  '🎯','🏖️','🏔️','🎭','🎨','🎵','⛷️','🏄','🎲','📸',
+  '😎','💤','🛒','🏥','⛽','🔑','🎁','⭐','💼','🗺️',
+];
+
+const HOURS  = Array.from({ length: 24 }, (_, i) => i);
+const DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── Storage ────────────────────────────────────────────────────────────────────
+let fileHandle = null;
+let fileLinked = false;
+let pendingSave = false;
+
+// localStorage fallback
+function lsLoad() {
+  try { const r = localStorage.getItem(LS_KEY); return r ? JSON.parse(r) : null; } catch { return null; }
 }
-function dbSave() { localStorage.setItem(KEY, JSON.stringify(db)); }
+function lsSave() { try { localStorage.setItem(LS_KEY, JSON.stringify(db)); } catch {} }
+
+// IndexedDB — persists the FileSystemFileHandle across sessions
+function openIDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+async function idbSaveHandle(h) {
+  try { const idb = await openIDB(); idb.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).put(h, IDB_KEY); } catch {}
+}
+async function idbLoadHandle() {
+  try {
+    const idb = await openIDB();
+    return await new Promise((res, rej) => {
+      const req = idb.transaction(IDB_STORE,'readonly').objectStore(IDB_STORE).get(IDB_KEY);
+      req.onsuccess = e => res(e.target.result);
+      req.onerror   = e => rej(e.target.error);
+    });
+  } catch { return null; }
+}
+async function idbClearHandle() {
+  try { const idb = await openIDB(); idb.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).delete(IDB_KEY); } catch {}
+}
+
+// File read / write
+async function readFromHandle(h) {
+  const text = await (await h.getFile()).text();
+  return JSON.parse(text);
+}
+async function writeToHandle(h) {
+  const w = await h.createWritable();
+  await w.write(JSON.stringify(db, null, 2));
+  await w.close();
+}
+
+// Main save — writes to localStorage always, file if linked
+function dbSave() {
+  lsSave();
+  if (!fileLinked || !fileHandle) return;
+  setFileStatus('unsaved');
+  if (!pendingSave) {
+    pendingSave = true;
+    setTimeout(async () => {
+      try { await writeToHandle(fileHandle); setFileStatus('saved'); }
+      catch { setFileStatus('error'); }
+      pendingSave = false;
+    }, 400);
+  }
+}
+
+// File status indicator
+function setFileStatus(state) {
+  const el = document.getElementById('file-status');
+  el.onclick = null; el.style.cursor = '';
+  const name = fileHandle ? fileHandle.name : '';
+  if (state === 'none')    { el.className = '';        el.textContent = '💾 No file linked'; }
+  if (state === 'linked')  { el.className = 'linked';  el.textContent = `✅ ${name}`; }
+  if (state === 'unsaved') { el.className = 'unsaved'; el.textContent = `● Saving…`; }
+  if (state === 'saved')   { el.className = 'linked';  el.textContent = `✅ ${name}`; }
+  if (state === 'error')   { el.className = 'unsaved'; el.textContent = '⚠️ Save failed — check permissions'; }
+}
+
+function applyLoadedData(data) {
+  if (!data || typeof data.trips !== 'object') return false;
+  db = data;
+  if (!db.customTypes) db.customTypes = [];
+  if (!db.trips[db.activeId]) db.activeId = Object.keys(db.trips)[0] || null;
+  return true;
+}
+
+// Open existing .json file
+async function openFile() {
+  if (!window.showOpenFilePicker) { document.getElementById('file-unsupported').style.display='block'; return; }
+  try {
+    const [h] = await window.showOpenFilePicker({
+      types: [{ description: 'Trip JSON', accept: { 'application/json': ['.json'] } }],
+    });
+    applyLoadedData(await readFromHandle(h));
+    fileHandle = h; fileLinked = true;
+    await idbSaveHandle(h);
+    setFileStatus('linked'); lsSave(); renderSidebar(); renderTripEditor();
+  } catch (e) { if (e.name !== 'AbortError') alert('Could not open file:\n' + e.message); }
+}
+
+// Save As — pick a new file location
+async function saveFileAs() {
+  if (!window.showSaveFilePicker) { document.getElementById('file-unsupported').style.display='block'; return; }
+  try {
+    const h = await window.showSaveFilePicker({
+      suggestedName: 'trips.json',
+      types: [{ description: 'Trip JSON', accept: { 'application/json': ['.json'] } }],
+    });
+    await writeToHandle(h);
+    fileHandle = h; fileLinked = true;
+    await idbSaveHandle(h);
+    setFileStatus('linked');
+  } catch (e) { if (e.name !== 'AbortError') alert('Could not save file:\n' + e.message); }
+}
+
+// On boot: try to restore a previously linked file handle from IndexedDB
+async function tryRestoreHandle() {
+  if (!window.showOpenFilePicker) {
+    document.getElementById('file-unsupported').style.display = 'block'; return;
+  }
+  const h = await idbLoadHandle();
+  if (!h) return;
+  try {
+    const perm = await h.queryPermission({ mode: 'readwrite' });
+    if (perm === 'granted') {
+      applyLoadedData(await readFromHandle(h));
+      fileHandle = h; fileLinked = true;
+      setFileStatus('linked'); lsSave(); renderSidebar(); renderTripEditor(); return;
+    }
+    // Needs user gesture to re-grant — show clickable prompt
+    if (perm === 'prompt') {
+      const el = document.getElementById('file-status');
+      el.className = 'unsaved';
+      el.textContent = `🔗 Click to reload ${h.name}`;
+      el.style.cursor = 'pointer';
+      el.onclick = async () => {
+        el.onclick = null; el.style.cursor = '';
+        try {
+          if (await h.requestPermission({ mode: 'readwrite' }) === 'granted') {
+            applyLoadedData(await readFromHandle(h));
+            fileHandle = h; fileLinked = true;
+            setFileStatus('linked'); lsSave(); renderSidebar(); renderTripEditor();
+          }
+        } catch {}
+      };
+    }
+  } catch { await idbClearHandle(); }
+}
 
 function makeTrip(id) {
   return { id, name: '', start: '', end: '', links: [], events: {} };
 }
 
-let db = dbLoad();
+let db = lsLoad();
 if (!db || typeof db.trips !== 'object') {
   const id = uid();
-  db = { activeId: id, trips: { [id]: makeTrip(id) } };
-  dbSave();
+  db = { activeId: id, trips: { [id]: makeTrip(id) }, customTypes: [] };
+} else {
+  if (!db.customTypes) db.customTypes = [];
 }
-// Ensure activeId points to a real trip
-if (!db.trips[db.activeId]) {
-  db.activeId = Object.keys(db.trips)[0] || null;
-}
+if (!db.trips[db.activeId]) db.activeId = Object.keys(db.trips)[0] || null;
 
 function activeTrip() { return db.trips[db.activeId] || null; }
+function allTypes()   { return [...BUILT_IN, ...db.customTypes]; }
+function getType(id)  { return allTypes().find(t => t.id === id) || BUILT_IN[0]; }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
-function uid() { return 't' + Date.now() + Math.random().toString(36).slice(2, 6); }
-function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
-
-// Build YYYY-MM-DD from a local Date without UTC conversion
+function uid() { return 't' + Date.now() + Math.random().toString(36).slice(2,6); }
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
 function fmtDate(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 function datesInRange(start, end) {
-  const list = [];
-  const cur = new Date(start + 'T00:00:00');
-  const last = new Date(end + 'T00:00:00');
-  while (cur <= last) {
-    list.push(fmtDate(cur));
-    cur.setDate(cur.getDate() + 1);
-  }
+  const list = [], cur = new Date(start+'T00:00:00'), last = new Date(end+'T00:00:00');
+  while (cur <= last) { list.push(fmtDate(cur)); cur.setDate(cur.getDate()+1); }
   return list;
 }
-
 function fmtDateLabel(iso) {
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(iso+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 }
-
 function tripDateLabel(t) {
   if (!t.start && !t.end) return 'No dates set';
   if (t.start && t.end) return `${fmtDateLabel(t.start)} – ${fmtDateLabel(t.end)}`;
-  if (t.start) return `From ${fmtDateLabel(t.start)}`;
-  return `Until ${fmtDateLabel(t.end)}`;
+  return t.start ? `From ${fmtDateLabel(t.start)}` : `Until ${fmtDateLabel(t.end)}`;
 }
 
 // ── Sidebar ────────────────────────────────────────────────────────────────────
 function renderSidebar() {
   const list = document.getElementById('trips-list');
-  const trips = Object.values(db.trips).sort((a, b) => b.id > a.id ? 1 : -1);
+  const trips = Object.values(db.trips).sort((a,b) => b.id > a.id ? 1 : -1);
   list.innerHTML = '';
-
-  if (!trips.length) {
-    list.innerHTML = '<div class="sidebar-empty">No trips yet</div>';
-    return;
-  }
-
+  if (!trips.length) { list.innerHTML = '<div class="sidebar-empty">No trips yet</div>'; return; }
   trips.forEach(t => {
     const el = document.createElement('div');
     el.className = 'trip-item' + (t.id === db.activeId ? ' active' : '');
     el.innerHTML = `
-      <div class="trip-item-name">${esc(t.name || 'Untitled Trip')}</div>
+      <div class="trip-item-name">${esc(t.name||'Untitled Trip')}</div>
       <div class="trip-item-dates">${tripDateLabel(t)}</div>
-      <button class="trip-item-delete" data-id="${t.id}" title="Delete">✕</button>
+      <button class="trip-item-delete" title="Delete">✕</button>
     `;
     el.addEventListener('click', e => {
       if (e.target.closest('.trip-item-delete')) return;
-      db.activeId = t.id;
-      dbSave();
-      renderSidebar();
-      renderTripEditor();
+      db.activeId = t.id; dbSave(); renderSidebar(); renderTripEditor();
     });
     el.querySelector('.trip-item-delete').addEventListener('click', e => {
       e.stopPropagation();
-      if (!confirm(`Delete "${t.name || 'Untitled Trip'}"? This can't be undone.`)) return;
+      if (!confirm(`Delete "${t.name||'Untitled Trip'}"?`)) return;
       delete db.trips[t.id];
       if (db.activeId === t.id) {
-        const remaining = Object.keys(db.trips);
-        if (!remaining.length) {
-          const newId = uid();
-          db.trips[newId] = makeTrip(newId);
-          db.activeId = newId;
-        } else {
-          db.activeId = remaining[0];
-        }
+        const rem = Object.keys(db.trips);
+        if (!rem.length) { const nid = uid(); db.trips[nid] = makeTrip(nid); db.activeId = nid; }
+        else db.activeId = rem[0];
       }
-      dbSave();
-      renderSidebar();
-      renderTripEditor();
+      dbSave(); renderSidebar(); renderTripEditor();
     });
     list.appendChild(el);
   });
+}
+
+// ── Legend ─────────────────────────────────────────────────────────────────────
+function renderLegend() {
+  const lg = document.getElementById('legend');
+  lg.innerHTML = '';
+  allTypes().forEach(t => {
+    const d = document.createElement('div');
+    d.className = 'leg';
+    d.innerHTML = `<div class="leg-dot" style="background:${t.color}"></div> ${esc(t.name)}`;
+    lg.appendChild(d);
+  });
+  const hint = document.createElement('span');
+  hint.className = 'hint'; hint.textContent = 'Click any time slot to add an event';
+  lg.appendChild(hint);
 }
 
 // ── Trip editor ────────────────────────────────────────────────────────────────
@@ -431,49 +643,31 @@ function renderTripEditor() {
   const t = activeTrip();
   const editor = document.getElementById('trip-editor');
   const noTrip = document.getElementById('no-trip-state');
-
-  if (!t) {
-    editor.style.display = 'none';
-    noTrip.style.display = 'flex';
-    return;
-  }
-
+  if (!t) { editor.style.display='none'; noTrip.style.display='flex'; return; }
   noTrip.style.display = 'none';
-  editor.style.display = 'flex';
-  editor.style.flexDirection = 'column';
-  editor.style.flex = '1';
-
-  document.getElementById('trip-name-input').value = t.name || '';
-  document.getElementById('start-date').value = t.start || '';
-  document.getElementById('end-date').value = t.end || '';
+  editor.style.display = 'flex'; editor.style.flexDirection = 'column'; editor.style.flex = '1';
+  document.getElementById('trip-name-input').value = t.name||'';
+  document.getElementById('start-date').value = t.start||'';
+  document.getElementById('end-date').value = t.end||'';
   document.title = t.name ? `${t.name} — Road Trip` : 'Road Trip Planner';
   document.getElementById('trip-links-panel').classList.remove('open');
-
-  renderTripLinks();
-  renderCalendar();
+  renderLegend(); renderTripLinks(); renderCalendar();
 }
 
 // ── Top bar inputs ─────────────────────────────────────────────────────────────
 document.getElementById('trip-name-input').addEventListener('input', e => {
   const t = activeTrip(); if (!t) return;
-  t.name = e.target.value;
-  document.title = t.name ? `${t.name} — Road Trip` : 'Road Trip Planner';
+  t.name = e.target.value; document.title = t.name ? `${t.name} — Road Trip` : 'Road Trip Planner';
   dbSave(); renderSidebar();
 });
 document.getElementById('start-date').addEventListener('change', e => {
-  const t = activeTrip(); if (!t) return;
-  t.start = e.target.value; dbSave(); renderSidebar(); renderCalendar();
+  const t = activeTrip(); if (!t) return; t.start = e.target.value; dbSave(); renderSidebar(); renderCalendar();
 });
 document.getElementById('end-date').addEventListener('change', e => {
-  const t = activeTrip(); if (!t) return;
-  t.end = e.target.value; dbSave(); renderSidebar(); renderCalendar();
+  const t = activeTrip(); if (!t) return; t.end = e.target.value; dbSave(); renderSidebar(); renderCalendar();
 });
-
-// ── New trip ───────────────────────────────────────────────────────────────────
 document.getElementById('btn-new-trip').addEventListener('click', () => {
-  const id = uid();
-  db.trips[id] = makeTrip(id);
-  db.activeId = id;
+  const id = uid(); db.trips[id] = makeTrip(id); db.activeId = id;
   dbSave(); renderSidebar(); renderTripEditor();
   setTimeout(() => document.getElementById('trip-name-input').focus(), 50);
 });
@@ -483,215 +677,312 @@ document.getElementById('btn-trip-links').addEventListener('click', () => {
   document.getElementById('trip-links-panel').classList.toggle('open');
 });
 document.getElementById('btn-add-trip-link').addEventListener('click', () => {
-  const t = activeTrip(); if (!t) return;
-  t.links.push({ label: '', url: '' });
-  dbSave(); renderTripLinks();
+  const t = activeTrip(); if (!t) return; t.links.push({label:'',url:''}); dbSave(); renderTripLinks();
 });
-
 function renderTripLinks() {
   const t = activeTrip();
   const editor = document.getElementById('trip-links-editor');
-  const chips = document.getElementById('trip-links-chips');
-  editor.innerHTML = ''; chips.innerHTML = '';
-  if (!t) return;
-
-  t.links.forEach((lk, i) => {
-    const row = document.createElement('div');
-    row.className = 'link-row';
+  const chips  = document.getElementById('trip-links-chips');
+  editor.innerHTML = ''; chips.innerHTML = ''; if (!t) return;
+  t.links.forEach((lk,i) => {
+    const row = document.createElement('div'); row.className = 'link-row';
     row.innerHTML = `
       <input type="text" placeholder="Label" value="${esc(lk.label)}" data-i="${i}" data-f="label">
-      <input type="url" placeholder="https://…" value="${esc(lk.url)}" data-i="${i}" data-f="url">
-      <button class="btn-rm-link" data-i="${i}">✕</button>
-    `;
+      <input type="url"  placeholder="https://…" value="${esc(lk.url)}" data-i="${i}" data-f="url">
+      <button class="btn-rm-link" data-i="${i}">✕</button>`;
     row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', ev => {
-      t.links[+ev.target.dataset.i][ev.target.dataset.f] = ev.target.value;
-      dbSave(); renderTripLinksChips();
+      t.links[+ev.target.dataset.i][ev.target.dataset.f] = ev.target.value; dbSave(); renderTripLinksChips();
     }));
     row.querySelector('button').addEventListener('click', ev => {
-      t.links.splice(+ev.target.dataset.i, 1); dbSave(); renderTripLinks();
+      t.links.splice(+ev.target.dataset.i,1); dbSave(); renderTripLinks();
     });
     editor.appendChild(row);
   });
   renderTripLinksChips();
 }
-
 function renderTripLinksChips() {
-  const t = activeTrip();
-  const chips = document.getElementById('trip-links-chips');
-  chips.innerHTML = '';
-  if (!t) return;
-  t.links.filter(l => l.url).forEach(l => {
+  const t = activeTrip(); const chips = document.getElementById('trip-links-chips');
+  chips.innerHTML = ''; if (!t) return;
+  t.links.filter(l=>l.url).forEach(l => {
     const a = document.createElement('a');
     a.href = l.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-    a.textContent = l.label || l.url;
-    chips.appendChild(a);
+    a.textContent = l.label||l.url; chips.appendChild(a);
   });
 }
 
 // ── Calendar ───────────────────────────────────────────────────────────────────
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const DAYS  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
 function renderCalendar() {
   const t = activeTrip();
   const noDates = document.getElementById('no-dates-state');
   const wrapper = document.getElementById('cal-wrapper');
   const cal     = document.getElementById('cal');
-
-  if (!t || !t.start || !t.end || t.start > t.end) {
-    noDates.style.display = 'flex'; wrapper.style.display = 'none'; return;
-  }
-
-  noDates.style.display = 'none'; wrapper.style.display = 'block';
-
+  if (!t||!t.start||!t.end||t.start>t.end) { noDates.style.display='flex'; wrapper.style.display='none'; return; }
+  noDates.style.display='none'; wrapper.style.display='block';
   const dates = datesInRange(t.start, t.end);
   cal.innerHTML = '';
-
-  // Time gutter
-  const gutter = document.createElement('div');
-  gutter.className = 'time-col';
+  const gutter = document.createElement('div'); gutter.className = 'time-col';
   HOURS.forEach(h => {
-    const tick = document.createElement('div');
-    tick.className = 'time-tick';
-    tick.textContent = h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`;
+    const tick = document.createElement('div'); tick.className = 'time-tick';
+    tick.textContent = h===0?'12am':h<12?`${h}am`:h===12?'12pm':`${h-12}pm`;
     gutter.appendChild(tick);
   });
   cal.appendChild(gutter);
-
-  // Day columns
   dates.forEach(iso => {
-    const d = new Date(iso + 'T00:00:00');
-    const col = document.createElement('div');
-    col.className = 'day-col';
-
-    const head = document.createElement('div');
-    head.className = 'day-head';
+    const d = new Date(iso+'T00:00:00');
+    const col = document.createElement('div'); col.className = 'day-col';
+    const head = document.createElement('div'); head.className = 'day-head';
     head.innerHTML = `<span class="dn">${d.getDate()}</span>${DAYS[d.getDay()]} ${MONTHS[d.getMonth()]}`;
     col.appendChild(head);
-
     HOURS.forEach(h => {
-      const slot = document.createElement('div');
-      slot.className = 'hour-slot';
+      const slot = document.createElement('div'); slot.className = 'hour-slot';
       slot.addEventListener('click', () => openEventModal(iso, h));
       col.appendChild(slot);
     });
-
-    (t.events[iso] || []).forEach(ev => placeEvent(col, ev, iso));
+    (t.events[iso]||[]).forEach(ev => placeEvent(col, ev, iso));
     cal.appendChild(col);
   });
 }
 
 function placeEvent(col, ev, iso) {
-  const top    = 48 + (toMin(ev.start) / 60) * 60;
-  const height = Math.max(((toMin(ev.end) - toMin(ev.start)) / 60) * 60, 22);
+  const top    = 48 + (toMin(ev.start)/60)*60;
+  const height = Math.max(((toMin(ev.end)-toMin(ev.start))/60)*60, 22);
+  const type   = getType(ev.type);
+  const icon   = ev.icon || type.icon;
   const el = document.createElement('div');
-  el.className = 'ev'; el.dataset.type = ev.type;
-  el.style.top = top + 'px'; el.style.height = height + 'px';
-  const emoji = { Food:'🍔', Travel:'🚗', Activity:'🎯', Free:'😎' };
-  el.innerHTML = `<div class="et">${emoji[ev.type] || ''} ${esc(ev.title)}</div><div class="eT">${ev.start}–${ev.end}${ev.location ? ' · ' + esc(ev.location) : ''}</div>`;
+  el.className = 'ev';
+  el.style.top = top+'px'; el.style.height = height+'px'; el.style.background = type.color;
+  el.innerHTML = `<div class="et">${icon} ${esc(ev.title)}</div><div class="eT">${ev.start}–${ev.end}${ev.location?' · '+esc(ev.location):''}</div>`;
   el.addEventListener('click', e => { e.stopPropagation(); openEventModal(iso, null, ev); });
   col.appendChild(el);
 }
 
-// ── Event modal ────────────────────────────────────────────────────────────────
-let mMode = 'new', mDate = null, mId = null, mType = 'Food', mLinks = [];
+// ── Event modal state ──────────────────────────────────────────────────────────
+let mMode='new', mDate=null, mId=null, mType='Food', mIcon='🍔', mLinks=[];
+let showTypeForm = false, tfColor = PRESET_COLORS[5], tfIcon = '⭐';
 
 function openEventModal(iso, hour, ev) {
-  mDate = iso;
+  mDate = iso; showTypeForm = false;
   if (ev) {
-    mMode = 'edit'; mId = ev.id; mType = ev.type;
-    mLinks = JSON.parse(JSON.stringify(ev.links || []));
+    mMode='edit'; mId=ev.id; mType=ev.type; mIcon=ev.icon||getType(ev.type).icon;
+    mLinks = JSON.parse(JSON.stringify(ev.links||[]));
     document.getElementById('modal-heading').textContent = 'Edit Event';
-    document.getElementById('ev-title').value = ev.title;
-    document.getElementById('ev-start').value = ev.start;
-    document.getElementById('ev-end').value = ev.end;
-    document.getElementById('ev-location').value = ev.location || '';
-    document.getElementById('ev-notes').value = ev.notes || '';
+    document.getElementById('ev-title').value    = ev.title;
+    document.getElementById('ev-start').value    = ev.start;
+    document.getElementById('ev-end').value      = ev.end;
+    document.getElementById('ev-location').value = ev.location||'';
+    document.getElementById('ev-notes').value    = ev.notes||'';
     document.getElementById('btn-delete-ev').style.display = 'block';
   } else {
-    mMode = 'new'; mId = null; mType = 'Food'; mLinks = [];
+    mMode='new'; mId=null; mType='Food'; mIcon='🍔'; mLinks=[];
     document.getElementById('modal-heading').textContent = 'Add Event';
-    document.getElementById('ev-title').value = '';
-    document.getElementById('ev-start').value = `${String(hour).padStart(2,'0')}:00`;
-    document.getElementById('ev-end').value   = `${String(Math.min(hour+1,23)).padStart(2,'0')}:00`;
+    document.getElementById('ev-title').value    = '';
+    document.getElementById('ev-start').value    = `${String(hour).padStart(2,'0')}:00`;
+    document.getElementById('ev-end').value      = `${String(Math.min(hour+1,23)).padStart(2,'0')}:00`;
     document.getElementById('ev-location').value = '';
-    document.getElementById('ev-notes').value = '';
+    document.getElementById('ev-notes').value    = '';
     document.getElementById('btn-delete-ev').style.display = 'none';
   }
-  setPill(mType);
-  renderEvLinks();
+  renderTypePills(); renderIconGrid(); renderEvLinks();
   document.getElementById('event-modal').style.display = 'flex';
   setTimeout(() => document.getElementById('ev-title').focus(), 50);
 }
 
-function setPill(type) {
-  mType = type;
-  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('on', p.dataset.t === type));
-}
-document.querySelectorAll('.pill').forEach(p => p.addEventListener('click', () => setPill(p.dataset.t)));
+// ── Type pills ─────────────────────────────────────────────────────────────────
+function renderTypePills() {
+  const wrap = document.getElementById('type-pills');
+  wrap.innerHTML = '';
 
-function renderEvLinks() {
-  const list = document.getElementById('ev-links-list');
-  list.innerHTML = '';
-  mLinks.forEach((lk, i) => {
-    const row = document.createElement('div');
-    row.className = 'link-row';
-    row.innerHTML = `
-      <input type="text" placeholder="Label" value="${esc(lk.label)}" data-i="${i}" data-f="label">
-      <input type="url" placeholder="https://…" value="${esc(lk.url)}" data-i="${i}" data-f="url">
-      <button class="btn-rm-link" data-i="${i}">✕</button>
-    `;
-    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', ev => {
-      mLinks[+ev.target.dataset.i][ev.target.dataset.f] = ev.target.value;
-    }));
-    row.querySelector('button').addEventListener('click', ev => {
-      mLinks.splice(+ev.target.dataset.i, 1); renderEvLinks();
+  allTypes().forEach(t => {
+    const pill = document.createElement('div');
+    pill.className = 'pill' + (mType === t.id ? ' on' : '');
+    pill.style.background = t.color; pill.style.borderColor = t.color;
+    pill.dataset.t = t.id;
+    pill.innerHTML = `${t.icon} ${esc(t.name)}`;
+
+    // delete button only for custom types
+    if (!BUILT_IN.find(b => b.id === t.id)) {
+      const del = document.createElement('button');
+      del.className = 'pill-del'; del.title = 'Delete type'; del.textContent = '✕';
+      del.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!confirm(`Delete type "${t.name}"? Events using it will keep their color.`)) return;
+        db.customTypes = db.customTypes.filter(c => c.id !== t.id);
+        if (mType === t.id) { mType = 'Food'; mIcon = '🍔'; }
+        dbSave(); renderTypePills(); renderLegend();
+      });
+      pill.appendChild(del);
+    }
+
+    pill.addEventListener('click', () => {
+      mType = t.id; mIcon = t.icon; renderTypePills(); renderIconGrid();
     });
-    list.appendChild(row);
+    wrap.appendChild(pill);
+  });
+
+  // + Create type button
+  const btn = document.createElement('button');
+  btn.className = 'btn-new-type'; btn.textContent = '+ New Type';
+  btn.addEventListener('click', () => { showTypeForm = !showTypeForm; renderTypePills(); });
+  wrap.appendChild(btn);
+
+  // Inline create-type form
+  if (showTypeForm) {
+    tfColor = tfColor || PRESET_COLORS[5];
+    tfIcon  = tfIcon  || '⭐';
+    const form = document.createElement('div');
+    form.className = 'type-form';
+    form.style.width = '100%';
+    form.innerHTML = `
+      <h4>New Event Type</h4>
+      <input type="text" id="tf-name" placeholder="Type name…" value="">
+      <div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Color</div>
+        <div class="color-swatches" id="tf-swatches"></div>
+      </div>
+      <div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Icon</div>
+        <div class="icon-grid" id="tf-icon-grid"></div>
+        <input type="text" id="tf-icon-custom" placeholder="or type any emoji" maxlength="2"
+          style="margin-top:5px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-size:.9rem;width:100%">
+      </div>
+      <div class="type-form-actions">
+        <button class="btn-sm ghost" id="tf-cancel">Cancel</button>
+        <button class="btn-sm primary" id="tf-save">Create</button>
+      </div>
+    `;
+    wrap.appendChild(form);
+
+    // Swatches
+    const swatchWrap = form.querySelector('#tf-swatches');
+    PRESET_COLORS.forEach(c => {
+      const s = document.createElement('div');
+      s.className = 'swatch' + (tfColor===c?' on':'');
+      s.style.background = c;
+      s.addEventListener('click', () => { tfColor = c; form.querySelectorAll('.swatch').forEach(x=>x.classList.remove('on')); s.classList.add('on'); });
+      swatchWrap.appendChild(s);
+    });
+
+    // Icon grid for new type
+    const tfGrid = form.querySelector('#tf-icon-grid');
+    EMOJI_SET.forEach(em => {
+      const cell = document.createElement('div');
+      cell.className = 'icon-cell' + (tfIcon===em?' on':'');
+      cell.textContent = em;
+      cell.addEventListener('click', () => {
+        tfIcon = em;
+        form.querySelector('#tf-icon-custom').value = '';
+        tfGrid.querySelectorAll('.icon-cell').forEach(x=>x.classList.remove('on'));
+        cell.classList.add('on');
+      });
+      tfGrid.appendChild(cell);
+    });
+
+    form.querySelector('#tf-icon-custom').addEventListener('input', e => {
+      const v = e.target.value.trim(); if (!v) return;
+      tfIcon = v; tfGrid.querySelectorAll('.icon-cell').forEach(x=>x.classList.remove('on'));
+    });
+    form.querySelector('#tf-cancel').addEventListener('click', () => { showTypeForm=false; renderTypePills(); });
+    form.querySelector('#tf-save').addEventListener('click', () => {
+      const name = (form.querySelector('#tf-name').value||'').trim();
+      if (!name) { form.querySelector('#tf-name').focus(); return; }
+      const id = 'custom-' + uid();
+      db.customTypes.push({ id, name, color: tfColor, icon: tfIcon });
+      mType = id; mIcon = tfIcon;
+      showTypeForm = false; dbSave(); renderTypePills(); renderLegend(); renderIconGrid();
+    });
+  }
+}
+
+// ── Icon grid ──────────────────────────────────────────────────────────────────
+function renderIconGrid() {
+  const preview = document.getElementById('icon-preview');
+  const custom  = document.getElementById('icon-custom');
+  const grid    = document.getElementById('icon-grid');
+  preview.textContent = mIcon;
+  custom.value = '';
+  grid.innerHTML = '';
+  EMOJI_SET.forEach(em => {
+    const cell = document.createElement('div');
+    cell.className = 'icon-cell' + (mIcon===em?' on':'');
+    cell.textContent = em;
+    cell.addEventListener('click', () => {
+      mIcon = em; custom.value = '';
+      grid.querySelectorAll('.icon-cell').forEach(x=>x.classList.remove('on'));
+      cell.classList.add('on');
+      preview.textContent = mIcon;
+    });
+    grid.appendChild(cell);
   });
 }
 
-document.getElementById('btn-add-ev-link').addEventListener('click', () => { mLinks.push({ label:'', url:'' }); renderEvLinks(); });
+document.getElementById('icon-custom').addEventListener('input', e => {
+  const v = e.target.value.trim(); if (!v) return;
+  mIcon = v;
+  document.getElementById('icon-preview').textContent = mIcon;
+  document.getElementById('icon-grid').querySelectorAll('.icon-cell').forEach(x=>x.classList.remove('on'));
+});
 
-function closeModal() { document.getElementById('event-modal').style.display = 'none'; }
+// ── Event links ────────────────────────────────────────────────────────────────
+function renderEvLinks() {
+  const list = document.getElementById('ev-links-list'); list.innerHTML = '';
+  mLinks.forEach((lk,i) => {
+    const row = document.createElement('div'); row.className = 'link-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Label" value="${esc(lk.label)}" data-i="${i}" data-f="label">
+      <input type="url"  placeholder="https://…" value="${esc(lk.url)}" data-i="${i}" data-f="url">
+      <button class="btn-rm-link" data-i="${i}">✕</button>`;
+    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', ev => {
+      mLinks[+ev.target.dataset.i][ev.target.dataset.f] = ev.target.value;
+    }));
+    row.querySelector('button').addEventListener('click', ev => { mLinks.splice(+ev.target.dataset.i,1); renderEvLinks(); });
+    list.appendChild(row);
+  });
+}
+document.getElementById('btn-add-ev-link').addEventListener('click', () => { mLinks.push({label:'',url:''}); renderEvLinks(); });
+
+// ── Modal save / delete / close ────────────────────────────────────────────────
+function closeModal() { document.getElementById('event-modal').style.display='none'; }
 document.getElementById('btn-cancel-ev').addEventListener('click', closeModal);
-document.getElementById('event-modal').addEventListener('click', e => { if (e.target.id === 'event-modal') closeModal(); });
+document.getElementById('event-modal').addEventListener('click', e => { if (e.target.id==='event-modal') closeModal(); });
 
 document.getElementById('btn-save-ev').addEventListener('click', () => {
   const title = document.getElementById('ev-title').value.trim();
   if (!title) { document.getElementById('ev-title').focus(); return; }
   const start = document.getElementById('ev-start').value;
   const end   = document.getElementById('ev-end').value;
-  if (!start || !end) return;
-
+  if (!start||!end) return;
   const t = activeTrip(); if (!t) return;
   if (!t.events[mDate]) t.events[mDate] = [];
-
-  const location = document.getElementById('ev-location').value.trim();
-  const notes    = document.getElementById('ev-notes').value;
-  const links    = mLinks.filter(l => l.url);
-
-  if (mMode === 'new') {
-    t.events[mDate].push({ id: uid(), type: mType, title, start, end, location, notes, links });
+  const ev = {
+    id: mId||uid(), type: mType, icon: mIcon, title, start, end,
+    location: document.getElementById('ev-location').value.trim(),
+    notes:    document.getElementById('ev-notes').value,
+    links:    mLinks.filter(l=>l.url),
+  };
+  if (mMode==='new') {
+    t.events[mDate].push(ev);
   } else {
-    const idx = t.events[mDate].findIndex(e => e.id === mId);
-    if (idx !== -1) t.events[mDate][idx] = { id: mId, type: mType, title, start, end, location, notes, links };
+    const idx = t.events[mDate].findIndex(e=>e.id===mId);
+    if (idx!==-1) t.events[mDate][idx] = ev;
   }
-
   dbSave(); closeModal(); renderCalendar();
 });
 
 document.getElementById('btn-delete-ev').addEventListener('click', () => {
   if (!confirm('Delete this event?')) return;
   const t = activeTrip(); if (!t) return;
-  t.events[mDate] = (t.events[mDate] || []).filter(e => e.id !== mId);
+  t.events[mDate] = (t.events[mDate]||[]).filter(e=>e.id!==mId);
   dbSave(); closeModal(); renderCalendar();
 });
+
+// ── File buttons ──────────────────────────────────────────────────────────────
+document.getElementById('btn-open-file').addEventListener('click', openFile);
+document.getElementById('btn-save-file').addEventListener('click', saveFileAs);
 
 // ── Boot ───────────────────────────────────────────────────────────────────────
 renderSidebar();
 renderTripEditor();
+tryRestoreHandle(); // async — updates UI if a file was previously linked
 </script>
 </body>
 </html>

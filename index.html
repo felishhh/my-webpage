@@ -167,6 +167,13 @@
     .ev .et { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ev .eT { font-weight: 400; opacity: .85; font-size: .63rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ev .e-opts { font-size: .6rem; opacity: .8; font-weight: 400; margin-top: 1px; }
+    /* ── Drag & resize ── */
+    .ev { cursor: grab; user-select: none; }
+    .ev.ev-dragging { opacity: .3; }
+    .ev-ghost { position: fixed; pointer-events: none; z-index: 200; border-radius: 5px; padding: 3px 6px; font-size: .7rem; font-weight: 600; color: #fff; display: flex; flex-direction: column; gap: 1px; box-shadow: 0 6px 20px rgba(0,0,0,.25); overflow: hidden; }
+    .ev-resize-handle { position: absolute; bottom: 0; left: 0; right: 0; height: 8px; cursor: ns-resize; border-radius: 0 0 5px 5px; opacity: 0; background: rgba(255,255,255,.35); }
+    .ev:hover .ev-resize-handle { opacity: 1; }
+    .day-col.drag-over { background: #e0f9ff; }
 
     /* ── Modal ── */
     .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px; }
@@ -622,7 +629,7 @@ function renderCalendar() {
   HOURS.forEach(h=>{const tick=document.createElement('div');tick.className='time-tick';tick.textContent=h===0?'12am':h<12?`${h}am`:h===12?'12pm':`${h-12}pm`;gutter.appendChild(tick);});
   cal.appendChild(gutter);
   dates.forEach(iso=>{
-    const d=new Date(iso+'T00:00:00'), col=document.createElement('div'); col.className='day-col';
+    const d=new Date(iso+'T00:00:00'), col=document.createElement('div'); col.className='day-col'; col.dataset.iso=iso;
     const head=document.createElement('div'); head.className='day-head';
     head.innerHTML=`<span class="dn">${d.getDate()}</span>${DAYS[d.getDay()]} ${MONTHS[d.getMonth()]}`;
     col.appendChild(head);
@@ -640,15 +647,124 @@ function placeEvent(col, ev, iso) {
   el.className='ev'+(ev.isAddOn?' addon':'');
   el.style.top=top+'px'; el.style.height=height+'px'; el.style.background=type.color;
 
-  // Subtitle: selected option name, or location
   const opts = ev.options||[];
   const sel  = opts.find(o=>o.status==='selected');
   const sub  = sel ? sel.name : (ev.location||'');
   const optsBadge = opts.length ? `<div class="e-opts">${ev.isAddOn?'⊕ add-on · ':''}${opts.length} option${opts.length!==1?'s':''}</div>` : (ev.isAddOn?'<div class="e-opts">⊕ add-on</div>':'');
-
   el.innerHTML=`<div class="et">${type.icon} ${esc(ev.title)}</div><div class="eT">${ev.start}–${ev.end}${sub?' · '+esc(sub):''}</div>${optsBadge}`;
-  el.addEventListener('click',e=>{e.stopPropagation();openEventModal(iso,null,ev);});
+
+  // Resize handle (drag bottom edge to change end time)
+  const rh=document.createElement('div'); rh.className='ev-resize-handle';
+  rh.addEventListener('mousedown', e=>{ e.stopPropagation(); e.preventDefault(); startEvResize(e,ev,iso,el); });
+  el.appendChild(rh);
+
+  // Drag to move; click to open modal
+  el.addEventListener('mousedown', e=>{ if(e.button!==0||e.target===rh)return; e.stopPropagation(); startEvDrag(e,ev,iso,el); });
+  el.addEventListener('click', e=>{ if(justDragged)return; e.stopPropagation(); openEventModal(iso,null,ev); });
+
   col.appendChild(el);
+}
+
+// ── Drag & resize ─────────────────────────────────────────────────────────────
+let dragState=null, resizeState=null, justDragged=false;
+
+function minToTime(m) {
+  m=Math.max(0,Math.min(24*60-1,m));
+  return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+}
+
+function startEvDrag(e, ev, iso, el) {
+  const r=el.getBoundingClientRect();
+  dragState={ ev, iso, el, offsetY:e.clientY-r.top, offsetX:e.clientX-r.left, startX:e.clientX, startY:e.clientY, moved:false, ghost:null };
+  document.addEventListener('mousemove', onEvDragMove);
+  document.addEventListener('mouseup', onEvDragEnd);
+}
+
+function onEvDragMove(e) {
+  if(!dragState) return;
+  if(!dragState.moved && (Math.abs(e.clientX-dragState.startX)>4||Math.abs(e.clientY-dragState.startY)>4)) {
+    dragState.moved=true;
+    dragState.el.classList.add('ev-dragging');
+    const r=dragState.el.getBoundingClientRect(), type=getType(dragState.ev.type);
+    const g=document.createElement('div'); g.className='ev-ghost';
+    g.style.cssText=`width:${r.width}px;height:${r.height}px;background:${type.color};top:${r.top}px;left:${r.left}px;`;
+    g.innerHTML=dragState.el.innerHTML;
+    document.body.appendChild(g); dragState.ghost=g;
+  }
+  if(dragState.moved && dragState.ghost) {
+    dragState.ghost.style.top=(e.clientY-dragState.offsetY)+'px';
+    dragState.ghost.style.left=(e.clientX-dragState.offsetX)+'px';
+  }
+  document.querySelectorAll('.day-col.drag-over').forEach(c=>c.classList.remove('drag-over'));
+  const col=document.elementFromPoint(e.clientX,e.clientY)?.closest('.day-col');
+  if(col) col.classList.add('drag-over');
+}
+
+function onEvDragEnd(e) {
+  document.removeEventListener('mousemove', onEvDragMove);
+  document.removeEventListener('mouseup', onEvDragEnd);
+  document.querySelectorAll('.day-col.drag-over').forEach(c=>c.classList.remove('drag-over'));
+  if(!dragState) return;
+  dragState.el.classList.remove('ev-dragging');
+  if(dragState.ghost) dragState.ghost.remove();
+
+  if(dragState.moved) {
+    justDragged=true;
+    const targetCol=document.elementFromPoint(e.clientX,e.clientY)?.closest('.day-col');
+    const targetIso=targetCol?.dataset?.iso;
+    if(targetCol && targetIso) {
+      const colRect=targetCol.getBoundingClientRect();
+      let startMin=Math.round((e.clientY-colRect.top-dragState.offsetY-48)/15)*15;
+      startMin=Math.max(0,Math.min(23*60,startMin));
+      const dur=toMin(dragState.ev.end)-toMin(dragState.ev.start);
+      let endMin=startMin+dur;
+      if(endMin>24*60){endMin=24*60;startMin=endMin-dur;}
+      const t=activeTrip();
+      if(t){
+        const oldArr=t.events[dragState.iso]||[];
+        const idx=oldArr.findIndex(ev=>ev.id===dragState.ev.id);
+        if(idx!==-1){
+          const [moved]=oldArr.splice(idx,1);
+          moved.start=minToTime(startMin); moved.end=minToTime(endMin);
+          if(!t.events[targetIso]) t.events[targetIso]=[];
+          t.events[targetIso].push(moved);
+          dbSave(); renderCalendar();
+        }
+      }
+    }
+    setTimeout(()=>{ justDragged=false; },50);
+  }
+  dragState=null;
+}
+
+function startEvResize(e, ev, iso, el) {
+  resizeState={ ev, iso, el, startY:e.clientY, origEndMin:toMin(ev.end), startMin:toMin(ev.start) };
+  document.addEventListener('mousemove', onEvResizeMove);
+  document.addEventListener('mouseup', onEvResizeEnd);
+}
+
+function onEvResizeMove(e) {
+  if(!resizeState) return;
+  const deltaMin=Math.round((e.clientY-resizeState.startY)/15)*15;
+  const newEnd=Math.max(resizeState.startMin+15, Math.min(24*60, resizeState.origEndMin+deltaMin));
+  resizeState.el.style.height=Math.max(22,newEnd-resizeState.startMin)+'px';
+  const tLabel=resizeState.el.querySelector('.eT');
+  if(tLabel) tLabel.textContent=`${resizeState.ev.start}–${minToTime(newEnd)}`;
+}
+
+function onEvResizeEnd(e) {
+  document.removeEventListener('mousemove', onEvResizeMove);
+  document.removeEventListener('mouseup', onEvResizeEnd);
+  if(!resizeState) return;
+  const deltaMin=Math.round((e.clientY-resizeState.startY)/15)*15;
+  const newEnd=Math.max(resizeState.startMin+15, Math.min(24*60, resizeState.origEndMin+deltaMin));
+  const t=activeTrip();
+  if(t){
+    const arr=t.events[resizeState.iso]||[];
+    const target=arr.find(ev=>ev.id===resizeState.ev.id);
+    if(target){ target.end=minToTime(newEnd); dbSave(); renderCalendar(); }
+  }
+  resizeState=null;
 }
 
 // ── Modal state ────────────────────────────────────────────────────────────────

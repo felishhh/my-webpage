@@ -579,6 +579,8 @@ function renderTripEditor() {
   document.getElementById('trip-links-panel').classList.remove('open');
   document.getElementById('packing-panel').classList.remove('open');
   document.getElementById('types-panel').classList.remove('open');
+  document.getElementById('cal-wrapper').style.display = '';
+  document.getElementById('no-dates-state').style.display = '';
   tpEditId=null; tpShowCreate=false; packEmojiOpenId=null;
   renderLegend(); renderTripLinks(); renderCalendar();
 }
@@ -941,7 +943,11 @@ function renderPackingPanel() {
 document.getElementById('btn-packing-list').addEventListener('click', () => {
   const panel = document.getElementById('packing-panel');
   panel.classList.toggle('open');
-  if (panel.classList.contains('open')) renderPackingPanel();
+  const isOpen = panel.classList.contains('open');
+  document.getElementById('cal-wrapper').style.display = isOpen ? 'none' : '';
+  document.getElementById('no-dates-state').style.display = isOpen ? 'none' : '';
+  if (isOpen) renderPackingPanel();
+  else renderCalendar();
 });
 
 document.getElementById('btn-pack-add-cat').addEventListener('click', () => {

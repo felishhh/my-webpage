@@ -53,16 +53,16 @@
     #main { margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
 
     /* ── Top bar ── */
-    #topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .topbar-input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 7px 11px; border-radius: 6px; font-size: .9rem; }
-    #trip-name-input { width: 200px; font-size: 1rem; }
+    #topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+    .topbar-input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: .88rem; }
+    #trip-name-input { width: 180px; font-weight: 600; }
     input[type="date"].topbar-input { color-scheme: light; }
-    .date-group { display: flex; align-items: center; gap: 6px; }
-    .date-group label { color: var(--muted); font-size: .8rem; white-space: nowrap; }
-    #btn-trip-links { margin-left: auto; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: .82rem; }
-    #btn-trip-links:hover { background: #e0f2fe; }
-    #btn-packing-list { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: .82rem; }
-    #btn-packing-list:hover { background: #e0f2fe; }
+    .date-range { display: flex; align-items: center; gap: 5px; }
+    .date-sep { color: var(--muted); font-size: .82rem; }
+    .tb-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .tb-divider { width: 1px; height: 18px; background: var(--border); margin: 0 2px; }
+    .tb-icon-btn { background: none; border: 1px solid transparent; color: var(--muted); cursor: pointer; padding: 5px 8px; border-radius: 6px; font-size: .95rem; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .tb-icon-btn:hover { background: var(--surface2); border-color: var(--border); color: var(--text); }
 
     /* ── Trip links panel ── */
     #trip-links-panel { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: none; flex-direction: column; gap: 10px; }
@@ -81,11 +81,38 @@
     .links-chips a:hover { text-decoration: underline; }
 
     /* ── Legend ── */
-    #legend { display: flex; gap: 14px; padding: 8px 20px; flex-wrap: wrap; background: var(--surface); border-bottom: 1px solid var(--border); align-items: center; }
-    .leg { display: flex; align-items: center; gap: 5px; font-size: .76rem; color: var(--muted); }
-    .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    #btn-manage-types { margin-left: auto; background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 5px 13px; border-radius: 6px; cursor: pointer; font-size: .78rem; }
-    #btn-manage-types:hover { border-color: var(--accent); color: var(--accent); }
+    #legend { display: flex; gap: 10px; padding: 5px 20px; flex-wrap: wrap; background: var(--bg); border-bottom: 1px solid var(--border); align-items: center; }
+    .leg { display: flex; align-items: center; gap: 4px; font-size: .72rem; color: var(--muted); }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    #btn-manage-types { margin-left: auto; background: none; border: none; color: var(--muted); padding: 3px 6px; border-radius: 5px; cursor: pointer; font-size: .85rem; opacity: .6; }
+    #btn-manage-types:hover { opacity: 1; background: var(--surface2); }
+    /* ── View toggle (lives in topbar) ── */
+    .view-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; flex-shrink: 0; }
+    .view-btn { background: none; border: none; border-right: 1px solid var(--border); color: var(--muted); padding: 5px 14px; cursor: pointer; font-size: .78rem; font-weight: 500; }
+    .view-btn:last-child { border-right: none; }
+    .view-btn.active { background: var(--accent); color: #fff; }
+    .view-btn:not(.active):hover { background: var(--surface2); color: var(--text); }
+
+    /* ── Itinerary view ── */
+    #itinerary-view { padding: 20px; overflow-x: auto; }
+    .itin-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    .itin-table th { background: var(--surface); border-bottom: 2px solid var(--border); padding: 9px 12px; text-align: left; font-size: .73rem; color: var(--muted); font-weight: 700; letter-spacing: .03em; white-space: nowrap; }
+    .itin-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .itin-table tbody tr:hover td { background: var(--surface2); cursor: pointer; }
+    .itin-day-head td { background: var(--surface2); font-size: .75rem; font-weight: 700; color: var(--muted); letter-spacing: .04em; padding: 5px 12px; border-top: 2px solid var(--border); border-bottom: 1px solid var(--border); }
+    .itin-type-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 10px; font-size: .72rem; font-weight: 600; color: #fff; white-space: nowrap; }
+    .itin-addon { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+    .itin-notes-cell { color: var(--muted); font-size: .78rem; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .itin-export-btn:hover { opacity: .88; }
+    .itin-opts-badge { display: inline-flex; align-items: center; gap: 4px; font-size: .73rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+    .itin-opts-pending { background: #fef3c7; color: #92400e; }
+    .itin-opts-sel { background: #dcfce7; color: #166534; }
+    .itin-editable { cursor: text; }
+    td.itin-editable:hover { background: #f0f9ff; }
+    .itin-edit-cell { width: 32px; text-align: center; }
+    .itin-edit-btn { background: none; border: none; cursor: pointer; font-size: .9rem; opacity: 0; padding: 2px 4px; border-radius: 4px; transition: opacity .15s; }
+    .itin-table tbody tr:hover .itin-edit-btn { opacity: 1; }
+    .itin-edit-btn:hover { background: var(--surface2); }
 
     /* ── Types panel ── */
     #types-panel { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: none; flex-direction: column; gap: 12px; }
@@ -279,10 +306,21 @@
   <div id="trip-editor" style="display:none">
     <div id="topbar">
       <input id="trip-name-input" class="topbar-input" type="text" placeholder="Trip name…">
-      <div class="date-group"><label>Start</label><input id="start-date" class="topbar-input" type="date"></div>
-      <div class="date-group"><label>End</label><input id="end-date" class="topbar-input" type="date"></div>
-      <button id="btn-trip-links">🔗 Trip Links</button>
-      <button id="btn-packing-list">🧳 Packing</button>
+      <div class="date-range">
+        <input id="start-date" class="topbar-input" type="date">
+        <span class="date-sep">→</span>
+        <input id="end-date" class="topbar-input" type="date">
+      </div>
+      <div class="tb-right">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="cal">Calendar</button>
+          <button class="view-btn" data-view="itin">Itinerary</button>
+        </div>
+        <div class="tb-divider"></div>
+        <button id="btn-export-excel" class="tb-icon-btn" title="Export to Excel" style="display:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/></svg></button>
+        <button id="btn-packing-list" class="tb-icon-btn" title="Packing List">🧳</button>
+        <button id="btn-trip-links" class="tb-icon-btn" title="Trip Links">🔗</button>
+      </div>
     </div>
     <div id="trip-links-panel">
       <h3>Trip Links & Resources</h3>
@@ -302,6 +340,7 @@
       <p>Enter start and end dates above to see your calendar</p>
     </div>
     <div id="cal-wrapper" style="display:none"><div id="cal"></div></div>
+    <div id="itinerary-view" style="display:none"></div>
   </div>
 </div>
 
@@ -572,14 +611,13 @@ function renderSidebar() {
 function renderLegend() {
   const lg = document.getElementById('legend');
   lg.innerHTML = '';
-  lg.style.cssText = 'display:flex;gap:14px;padding:8px 20px;flex-wrap:wrap;background:var(--surface);border-bottom:1px solid var(--border);align-items:center;';
   allTypes().forEach(t => {
     const d = document.createElement('div'); d.className='leg';
-    d.innerHTML = `<div class="leg-dot" style="background:${t.color}"></div> ${esc(t.name)}`;
+    d.innerHTML = `<div class="leg-dot" style="background:${t.color}"></div>${esc(t.name)}`;
     lg.appendChild(d);
   });
   const btn = document.createElement('button');
-  btn.id='btn-manage-types'; btn.textContent='⚙️ Types';
+  btn.id='btn-manage-types'; btn.title='Manage event types'; btn.textContent='⚙';
   btn.addEventListener('click', () => { document.getElementById('types-panel').classList.toggle('open'); renderTypesPanel(); });
   lg.appendChild(btn);
 }
@@ -601,6 +639,10 @@ function renderTripEditor() {
   document.getElementById('no-dates-state').style.display = '';
   document.getElementById('legend').style.display = '';
   tpEditId=null; tpShowCreate=false; packEmojiOpenId=null;
+  currentView = 'cal';
+  document.getElementById('itinerary-view').style.display = 'none';
+  document.getElementById('btn-export-excel').style.display = 'none';
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === 'cal'));
   renderLegend(); renderTripLinks(); renderCalendar();
 }
 
@@ -674,6 +716,202 @@ function placeEvent(col, ev, iso) {
   el.addEventListener('click', e=>{ if(justDragged)return; e.stopPropagation(); openEventModal(iso,null,ev); });
 
   col.appendChild(el);
+}
+
+// ── View toggle ───────────────────────────────────────────────────────────────
+let currentView = 'cal';
+
+function setView(v) {
+  currentView = v;
+  const calWrap = document.getElementById('cal-wrapper');
+  const itinWrap = document.getElementById('itinerary-view');
+  const exportBtn = document.getElementById('btn-export-excel');
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  if (exportBtn) exportBtn.style.display = v === 'itin' ? 'flex' : 'none';
+  if (v === 'cal') {
+    itinWrap.style.display = 'none';
+    renderCalendar();
+  } else {
+    calWrap.style.display = 'none';
+    document.getElementById('no-dates-state').style.display = 'none';
+    itinWrap.style.display = 'block';
+    renderItinerary();
+  }
+}
+
+function renderItinerary() {
+  const t = activeTrip();
+  const view = document.getElementById('itinerary-view');
+  if (!t || !t.start || !t.end || t.start > t.end) {
+    view.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:.9rem">Enter start and end dates to see your itinerary.</div>';
+    return;
+  }
+  const dates = datesInRange(t.start, t.end);
+  let allRows = [];
+  dates.forEach(iso => {
+    const evs = (t.events[iso] || []).slice().sort((a, b) => a.start.localeCompare(b.start));
+    evs.forEach(ev => allRows.push({ iso, ev }));
+  });
+  if (!allRows.length) {
+    view.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);font-size:.9rem">No events yet — add events in Calendar view.</div>';
+    return;
+  }
+
+  const INPUT_CSS = 'background:var(--surface2);border:1px solid var(--accent);border-radius:4px;color:var(--text);font-family:inherit;';
+
+  function editCell(td, render, activate) {
+    render();
+    td.classList.add('itin-editable');
+    td.addEventListener('click', e => {
+      e.stopPropagation();
+      if (td.querySelector('input,textarea,select')) return;
+      activate();
+    });
+  }
+
+  const table = document.createElement('table');
+  table.className = 'itin-table';
+  table.innerHTML = `<thead><tr><th></th><th>Time</th><th>Type</th><th>Activity</th><th>Location</th><th>Options</th><th>Notes</th></tr></thead>`;
+  const tbody = document.createElement('tbody');
+  let lastIso = null;
+
+  allRows.forEach(({ iso, ev }) => {
+    if (iso !== lastIso) {
+      const d = new Date(iso + 'T00:00:00');
+      const sep = document.createElement('tr');
+      sep.className = 'itin-day-head';
+      sep.innerHTML = `<td colspan="7">${DAYS[d.getDay()].toUpperCase()}, ${MONTHS[d.getMonth()].toUpperCase()} ${d.getDate()}</td>`;
+      tbody.appendChild(sep);
+      lastIso = iso;
+    }
+
+    const tr = document.createElement('tr');
+
+    // ── Edit button ──
+    const tdDate = document.createElement('td');
+    tdDate.className = 'itin-edit-cell';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'itin-edit-btn'; editBtn.title = 'Edit event'; editBtn.textContent = '✏️';
+    editBtn.addEventListener('click', e => { e.stopPropagation(); openEventModal(iso, null, ev); });
+    tdDate.appendChild(editBtn);
+    tr.addEventListener('click', () => openEventModal(iso, null, ev));
+
+    // ── Time ──
+    const tdTime = document.createElement('td');
+    editCell(tdTime, () => {
+      tdTime.innerHTML = `<span style="white-space:nowrap;font-size:.8rem;color:var(--muted)">${ev.start}–${ev.end}</span>`;
+    }, () => {
+      tdTime.innerHTML = '';
+      const sIn = document.createElement('input'); sIn.type='time'; sIn.value=ev.start;
+      sIn.style.cssText = INPUT_CSS + 'width:88px;font-size:.78rem;padding:2px 4px;';
+      const dash = document.createTextNode(' – ');
+      const eIn = document.createElement('input'); eIn.type='time'; eIn.value=ev.end;
+      eIn.style.cssText = sIn.style.cssText;
+      const save = () => { if(sIn.value) ev.start=sIn.value; if(eIn.value) ev.end=eIn.value; dbSave(); editCell(tdTime, ()=>{ tdTime.innerHTML=`<span style="white-space:nowrap;font-size:.8rem;color:var(--muted)">${ev.start}–${ev.end}</span>`; }, ()=>{}); };
+      sIn.addEventListener('change', save); eIn.addEventListener('change', save);
+      sIn.addEventListener('keydown', k => { if(k.key==='Tab'||k.key==='Enter') eIn.focus(); if(k.key==='Escape') { ev.start=sIn.defaultValue; renderItinerary(); } });
+      eIn.addEventListener('keydown', k => { if(k.key==='Escape') renderItinerary(); });
+      tdTime.appendChild(sIn); tdTime.appendChild(dash); tdTime.appendChild(eIn);
+      sIn.focus();
+    });
+
+    // ── Type ──
+    const tdType = document.createElement('td');
+    const renderTypeCell = () => {
+      tdType.innerHTML = '';
+      const tp = getType(ev.type);
+      const chip = document.createElement('span'); chip.className='itin-type-chip'; chip.style.background=tp.color;
+      chip.textContent = `${tp.icon} ${tp.name}`; tdType.appendChild(chip);
+      if (ev.isAddOn) { const a=document.createElement('div'); a.className='itin-addon'; a.textContent='⊕ add-on'; tdType.appendChild(a); }
+    };
+    editCell(tdType, renderTypeCell, () => {
+      tdType.innerHTML = '';
+      const sel = document.createElement('select');
+      sel.style.cssText = INPUT_CSS + 'font-size:.78rem;padding:3px 6px;cursor:pointer;';
+      allTypes().forEach(tp => {
+        const opt=document.createElement('option'); opt.value=tp.id; opt.textContent=`${tp.icon} ${tp.name}`;
+        if (tp.id===ev.type) opt.selected=true; sel.appendChild(opt);
+      });
+      const save = () => { ev.type=sel.value; dbSave(); renderTypeCell(); };
+      sel.addEventListener('change', save);
+      sel.addEventListener('blur', renderTypeCell);
+      sel.addEventListener('keydown', k => { if(k.key==='Escape') renderTypeCell(); });
+      tdType.appendChild(sel); sel.focus();
+    });
+
+    // ── Activity (title) ──
+    const tdTitle = document.createElement('td');
+    const renderTitleCell = () => { tdTitle.innerHTML=`<strong>${esc(ev.title)}</strong>`; };
+    editCell(tdTitle, renderTitleCell, () => {
+      tdTitle.innerHTML = '';
+      const inp = document.createElement('input'); inp.type='text'; inp.value=ev.title;
+      inp.style.cssText = INPUT_CSS + 'width:100%;min-width:130px;font-size:.84rem;font-weight:600;padding:3px 6px;';
+      const save = () => { const v=inp.value.trim(); if(v){ev.title=v;dbSave();} renderTitleCell(); };
+      inp.addEventListener('blur', save);
+      inp.addEventListener('keydown', k => { if(k.key==='Enter'){k.preventDefault();save();} if(k.key==='Escape') renderTitleCell(); });
+      tdTitle.appendChild(inp); inp.focus(); inp.select();
+    });
+
+    // ── Location ──
+    const tdLoc = document.createElement('td');
+    tdLoc.style.cssText = 'color:var(--muted);font-size:.82rem;';
+    const renderLocCell = () => {
+      tdLoc.innerHTML = '';
+      if (ev.location) { tdLoc.textContent = ev.location; }
+      else { const ph=document.createElement('span'); ph.style.color='var(--border)'; ph.textContent='—'; tdLoc.appendChild(ph); }
+    };
+    editCell(tdLoc, renderLocCell, () => {
+      tdLoc.innerHTML = '';
+      const inp = document.createElement('input'); inp.type='text'; inp.value=ev.location||''; inp.placeholder='Location…';
+      inp.style.cssText = INPUT_CSS + 'width:100%;font-size:.82rem;padding:3px 6px;';
+      const save = () => { ev.location=inp.value.trim(); dbSave(); renderLocCell(); };
+      inp.addEventListener('blur', save);
+      inp.addEventListener('keydown', k => { if(k.key==='Enter'){k.preventDefault();save();} if(k.key==='Escape') renderLocCell(); });
+      tdLoc.appendChild(inp); inp.focus(); inp.select();
+    });
+
+    // ── Options ──
+    const tdOpts = document.createElement('td');
+    const opts = ev.options || [], selOpt = opts.find(o => o.status === 'selected');
+    if (!opts.length) {
+      const ph = document.createElement('span'); ph.style.color='var(--border)'; ph.textContent='—'; tdOpts.appendChild(ph);
+    } else if (selOpt) {
+      const badge = document.createElement('span'); badge.className='itin-opts-badge itin-opts-sel';
+      badge.textContent = `✓ ${selOpt.name}`; tdOpts.appendChild(badge);
+    } else {
+      const badge = document.createElement('span'); badge.className='itin-opts-badge itin-opts-pending';
+      badge.textContent = `● ${opts.length} option${opts.length!==1?'s':''}`;
+      tdOpts.appendChild(badge);
+    }
+    tdOpts.style.cursor = 'pointer';
+    tdOpts.addEventListener('click', e => { e.stopPropagation(); openEventModal(iso, null, ev); });
+
+    // ── Notes ──
+    const tdNotes = document.createElement('td');
+    tdNotes.className = 'itin-notes-cell';
+    const renderNotesCell = () => {
+      tdNotes.innerHTML = '';
+      if (ev.notes) { tdNotes.textContent=ev.notes; }
+      else { const ph=document.createElement('span'); ph.style.color='var(--border)'; ph.textContent='—'; tdNotes.appendChild(ph); }
+    };
+    editCell(tdNotes, renderNotesCell, () => {
+      tdNotes.innerHTML = '';
+      const ta = document.createElement('textarea'); ta.value=ev.notes||''; ta.placeholder='Notes…'; ta.rows=2;
+      ta.style.cssText = INPUT_CSS + 'width:100%;min-width:160px;font-size:.78rem;padding:3px 6px;resize:vertical;';
+      const save = () => { ev.notes=ta.value.trim(); dbSave(); renderNotesCell(); };
+      ta.addEventListener('blur', save);
+      ta.addEventListener('keydown', k => { if(k.key==='Escape') save(); });
+      tdNotes.appendChild(ta); ta.focus(); ta.select();
+    });
+
+    tr.appendChild(tdDate); tr.appendChild(tdTime); tr.appendChild(tdType);
+    tr.appendChild(tdTitle); tr.appendChild(tdLoc); tr.appendChild(tdOpts); tr.appendChild(tdNotes);
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  view.innerHTML = '';
+  view.appendChild(table);
 }
 
 // ── Drag & resize ─────────────────────────────────────────────────────────────
@@ -1199,14 +1437,14 @@ document.getElementById('btn-save-ev').addEventListener('click',()=>{
   };
   if (mMode==='new') t.events[mDate].push(ev);
   else { const idx=t.events[mDate].findIndex(e=>e.id===mId); if(idx!==-1)t.events[mDate][idx]=ev; }
-  dbSave(); closeModal(); renderCalendar();
+  dbSave(); closeModal(); currentView === 'itin' ? renderItinerary() : renderCalendar();
 });
 
 document.getElementById('btn-delete-ev').addEventListener('click',()=>{
   if(!confirm('Delete this event?'))return;
   const t=activeTrip();if(!t)return;
   t.events[mDate]=(t.events[mDate]||[]).filter(e=>e.id!==mId);
-  dbSave();closeModal();renderCalendar();
+  dbSave(); closeModal(); currentView === 'itin' ? renderItinerary() : renderCalendar();
 });
 
 // ── File buttons ───────────────────────────────────────────────────────────────
@@ -1216,10 +1454,46 @@ document.getElementById('btn-save-file').addEventListener('click', saveFileAs);
 // Prevent any accidental form submission from navigating the page (file:// URL safety)
 document.addEventListener('submit', e => e.preventDefault(), true);
 
+document.querySelectorAll('.view-btn').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+document.getElementById('btn-export-excel').addEventListener('click', exportItinerary);
+
 // ── Boot ───────────────────────────────────────────────────────────────────────
 renderSidebar();
 renderTripEditor();
 tryRestoreHandle();
+// ── Excel export ──────────────────────────────────────────────────────────────
+function exportItinerary() {
+  const t = activeTrip();
+  if (!t || !t.start || !t.end) return;
+  if (typeof XLSX === 'undefined') { alert('Excel library not loaded — check your internet connection.'); return; }
+
+  const dates = datesInRange(t.start, t.end);
+  const rows = [['Date', 'Day', 'Start', 'End', 'Type', 'Activity', 'Location', 'Options', 'Notes']];
+
+  dates.forEach(iso => {
+    const evs = (t.events[iso] || []).slice().sort((a, b) => a.start.localeCompare(b.start));
+    if (!evs.length) return;
+    const d = new Date(iso + 'T00:00:00');
+    const dateStr = iso;
+    const dayStr = `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
+    evs.forEach(ev => {
+      const tp = getType(ev.type);
+      const opts = ev.options || [], sel = opts.find(o => o.status === 'selected');
+      const optStr = sel ? `✓ ${sel.name}` : opts.length ? `${opts.length} option${opts.length !== 1 ? 's' : ''}` : '';
+      rows.push([dateStr, dayStr, ev.start, ev.end, `${tp.icon} ${tp.name}`, ev.title, ev.location || '', optStr, ev.notes || '']);
+    });
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 18 }, { wch: 7 }, { wch: 7 },
+    { wch: 14 }, { wch: 32 }, { wch: 26 }, { wch: 24 }, { wch: 44 },
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, (t.name || 'Itinerary').slice(0, 31));
+  XLSX.writeFile(wb, `${(t.name || 'itinerary').replace(/[^\w\s-]/g, '')}.xlsx`);
+}
 </script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </body>
 </html>
